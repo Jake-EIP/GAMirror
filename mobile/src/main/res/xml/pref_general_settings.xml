@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/setting_category_general">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="show_left_toolbar"
+            android:title="@string/setting_show_left_toolbar" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="goto_home_at_start"
+            android:title="@string/setting_goto_home_at_start" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="goto_home_at_stop"
+            android:title="@string/setting_goto_home_at_stop" />
+
+        <!--ListPreference
+            android:defaultValue="1"
+            android:entries="@array/pref_actions"
+            android:entryValues="@array/pref_actions_values"
+            android:key="action_double_tap"
+            android:title="@string/pref_action_double_tap" /-->
+
+        <ListPreference
+            android:defaultValue="2"
+            android:entries="@array/pref_actions"
+            android:entryValues="@array/pref_actions_values"
+            android:key="action_2finger_tap"
+            android:title="@string/pref_action_2finger_tap" />
+
+
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory android:title="@string/setting_category_brightness">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="overwrite_brightness"
+            android:title="@string/setting_overwrite_brightness" />
+
+        <EditTextPreference
+            android:defaultValue="0"
+            android:dependency="overwrite_brightness"
+            android:inputType="number"
+            android:key="overwrite_brightness_value"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/setting_overwrite_brightness_value" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/setting_category_rotaion">
+
+        <ListPreference
+            android:defaultValue="2"
+            android:entries="@array/pref_orientation_list_titles"
+            android:entryValues="@array/pref_orientation_list_values"
+            android:key="orientation_method"
+            android:title="@string/setting_orientation_method" />
+
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/pref_rotation_list_titles"
+            android:entryValues="@array/pref_rotation_list_values"
+            android:key="orientation_rotation"
+            android:title="@string/setting_orientation_rotation" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="reset_screen_rotation_on_stop"
+            android:title="@string/setting_reset_screen_rotation_on_stop" />
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/setting_category_screen_size">
+
+        <ListPreference
+            android:defaultValue="immersive.full=*"
+            android:entries="@array/pref_immersive_list_titles"
+            android:entryValues="@array/pref_immersive_list_values"
+            android:key="immersive_mode"
+            android:title="@string/setting_immersive_mode" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

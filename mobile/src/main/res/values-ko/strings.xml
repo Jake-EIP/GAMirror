@@ -1,0 +1,60 @@
+<resources>
+    <string name="app_name">GAMirror</string>
+
+    <string name="pref_general_settings">설정</string>
+    <string name="pref_fav_settings">즐겨찾기</string>
+
+    <string name="setting_category_general">일반</string>
+        <string name="setting_show_left_toolbar">왼쪽 툴바 사용</string>
+        <string name="setting_goto_home_at_start">시작시 홈화면으로 이동</string>
+        <string name="setting_goto_home_at_stop">종료시 홈화면으로 이동</string>
+        <string name="setting_goto_home_at_double_tap">(루팅) 두번탭하면 홈으로 이동</string>
+        <string name="setting_go_back_at_2finger_tap">(루팅) 두손가락 탭하면 뒤로 이동</string>
+
+    <string name="setting_category_brightness">화면 밝기</string>
+        <string name="setting_overwrite_brightness">기기의 밝기를 조정합니다.</string>
+        <string name="setting_overwrite_brightness_value">"밝기(0~255)"</string>
+
+
+    <string name="setting_category_rotaion">화면 회전</string>
+        <string name="setting_orientation_method">회전 방법</string>
+
+        <string name="setting_orientation_rotation">회전 각도</string>
+        <string name="setting_reset_screen_rotation_on_stop">미러링이 종료되면 원래대로 복구</string>
+
+
+    <string name="setting_category_screen_size">화면 크기 (루팅 필요)</string>
+        <string name="setting_immersive_mode">네비게이션바, 상단상태바 숨김 (루팅 필요)</string>
+
+    <string-array name="pref_orientation_list_titles">
+        <item>기기의 회전 방향에 따름</item>
+        <item>강제 적용</item>
+    </string-array>
+
+    <string-array name="pref_rotation_list_titles">
+        <item>0도</item>
+        <item>90도</item>
+        <item>180도</item>
+        <item>270도</item>
+    </string-array>
+
+
+    <string-array name="pref_immersive_list_titles">
+        <item>사용안함</item>
+        <item>상태바 숨김</item>
+        <item>네비게이션바 숨김</item>
+        <item>전체 숨김</item>
+    </string-array>
+
+    <string name="deselect_all">모두 해제</string>
+
+    <string name="pref_action_2finger_tap">두 손가락 터치</string>
+    <string name="pref_action_double_tap">더블 터치</string>
+
+    <string-array name="pref_actions">
+        <item>사용하지 않음</item>
+        <item>뒤로가기 (루팅 필요)</item>
+        <item>사용중인 앱 종료 (루팅 필요)</item>
+    </string-array>
+
+</resources>

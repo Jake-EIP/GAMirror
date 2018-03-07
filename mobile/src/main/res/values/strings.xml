@@ -1,0 +1,97 @@
+<resources>
+    <string name="app_name">GAMirror</string>
+
+    <string name="pref_general_settings">Settings</string>
+    <string name="pref_fav_settings">Favourite apps</string>
+
+    <string name="setting_category_general">General</string>
+        <string name="setting_show_left_toolbar">Show left toolbar</string>
+        <string name="setting_goto_home_at_start">Goto home at start</string>
+        <string name="setting_goto_home_at_stop">Goto home at stop</string>
+        <string name="setting_goto_home_at_double_tap">(Root) Goto home at double tap</string>
+        <string name="setting_go_back_at_2finger_tap">(Root) Go back at 2 finger tap</string>
+
+    <string name="setting_category_brightness">Brightness</string>
+        <string name="setting_overwrite_brightness">Overwrite screen brightness</string>
+        <string name="setting_overwrite_brightness_value">"Screen brightness value (0 ~ 255)"</string>
+
+
+    <string name="setting_category_rotaion">Rotation</string>
+        <string name="setting_orientation_method">Screen rotation</string>
+
+        <string name="setting_orientation_rotation">Rotation degree</string>
+        <string name="setting_reset_screen_rotation_on_stop">Restore rotation on focus lost</string>
+
+    <string name="setting_category_screen_size">Screen size (Root)</string>
+        <string name="setting_immersive_mode">Immersive mode</string>
+
+    <string-array name="pref_orientation_list_titles">
+        <item>None</item>
+        <item>Force</item>
+    </string-array>
+
+    <string-array name="pref_rotation_list_titles">
+        <item>0 degree</item>
+        <item>90 degree</item>
+        <item>180 degree</item>
+        <item>270 degree</item>
+    </string-array>
+
+
+    <string-array name="pref_immersive_list_titles">
+        <item>None</item>
+        <item>Hide Status</item>
+        <item>Hide Navigation</item>
+        <item>Full immersive</item>
+    </string-array>
+
+
+    <string name="deselect_all">Deselect All</string>
+
+    <string name="pref_action_2finger_tap">When two finger tap (Root)</string>
+    <string name="pref_action_double_tap">When double tap (Root)</string>
+
+    <string-array name="pref_actions">
+        <item>None</item>
+        <item>Back</item>
+        <item>Kill current app</item>
+    </string-array>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <string-array name="pref_actions_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="pref_orientation_list_values">
+        <item>0</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="pref_rotation_list_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="pref_immersive_list_values">
+        <item>null*</item>
+        <item>immersive.status=*</item>
+        <item>immersive.navigation=*</item>
+        <item>immersive.full=*</item>
+    </string-array>
+
+</resources>
