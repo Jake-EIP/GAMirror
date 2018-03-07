@@ -300,12 +300,6 @@ public class AutoActivity extends CarActivity implements
     @Override
     public void onDestroy()
     {
-        stopBrightnessService();
-        stopOrientationService();
-        ResetScreenSize();
-        ResetImmersiveMode();
-        stopScreenCapture();
-
         if(_minitouchSocket != null)
             _minitouchSocket.disconnect();
 
@@ -362,8 +356,8 @@ public class AutoActivity extends CarActivity implements
         super.onStop();
         AutoApplication.DisableOrientationListener();
 
-        OnScreenOff();
         unregisterReceiver(_carReceiver);
+        OnScreenOff();
     }
 
     @Override
@@ -378,11 +372,6 @@ public class AutoActivity extends CarActivity implements
         if(focus)
         {
             startScreenCapture();
-            SetScreenSize();
-        }
-        else
-        {
-            stopScreenCapture();
             SetScreenSize();
         }
     }
@@ -566,7 +555,6 @@ public class AutoActivity extends CarActivity implements
     private void ResetScreenSize()
     {
         m_ScreenResized = false;
-
         shellExec("wm size reset");
     }
 
