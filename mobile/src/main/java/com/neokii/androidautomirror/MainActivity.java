@@ -7,6 +7,7 @@ import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -173,17 +174,34 @@ public class MainActivity extends AppCompatPreferenceActivity
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    protected void onActivityResult(int requestCode, final int resultCode, Intent data)
     {
         if(AutoActivity.REQUEST_MEDIA_PROJECTION_PERMISSION == requestCode)
         {
-            if(resultCode != RESULT_OK)
-                RequestProjectionPermission();
-            else
+            new Handler().post(new Runnable()
             {
-                RequestWriteSettingsPermission();
-                RequestOverlayPermission();
-            }
+                @Override
+                public void run()
+                {
+                    if(resultCode != RESULT_OK)
+                    {
+                        RequestProjectionPermission();
+                    }
+                    else
+                    {
+                        RequestWriteSettingsPermission();
+
+                        new Handler().post(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                RequestOverlayPermission();
+                            }
+                        });
+                    }
+                }
+            });
         }
 
         super.onActivityResult(requestCode, resultCode, data);
