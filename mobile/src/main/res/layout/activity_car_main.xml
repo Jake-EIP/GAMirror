@@ -43,20 +43,20 @@
                     android:id="@+id/listView"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_above="@+id/btnHome"
+                    android:layout_above="@+id/btnBack"
                     android:stretchMode="columnWidth"
                     android:layout_centerHorizontal="true"
                     android:divider="@null"
                     android:dividerHeight="0dp"/>
 
                 <com.neokii.androidautomirror.MyImageView
-                    android:id="@id/btnHome"
+                    android:id="@id/btnBack"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_alignParentBottom="true"
                     android:layout_marginBottom="8dp"
-                    android:src="@drawable/ic_panorama_fish_eye_white_36dp"
+                    android:src="@drawable/ic_arrow_back_white_36dp"
                     style="@style/Widget.AppCompat.Button.Borderless"/>
 
             </RelativeLayout>

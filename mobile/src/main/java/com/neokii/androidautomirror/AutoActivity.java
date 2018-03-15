@@ -491,7 +491,7 @@ public class AutoActivity extends CarActivity implements
 
     private void startBrightnessService()
     {
-        boolean do_it = getDefaultSharedPreferences("overwrite_brightness", true);
+        boolean do_it = getDefaultSharedPreferences("overwrite_brightness", false);
         if (do_it)
         {
             int brightness = getDefaultSharedPreferences("overwrite_brightness_value", 0);
@@ -567,7 +567,7 @@ public class AutoActivity extends CarActivity implements
         UpdateTouchTransformations(true);
 
         DisplayMetrics metrics = new DisplayMetrics();
-        c().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        c().getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
         int ScreenDensity = metrics.densityDpi;
 
         MediaProjectionManager mediaProjectionManager = (MediaProjectionManager)getSystemService(Context.MEDIA_PROJECTION_SERVICE);
@@ -940,36 +940,18 @@ public class AutoActivity extends CarActivity implements
 
             startTimer();
 
-            ImageView btnHome = (ImageView)findViewById(R.id.btnHome);
+            ImageView btnBack = (ImageView)findViewById(R.id.btnBack);
 
-            if(_minitouchTask != null) // back key
+            btnBack.setOnClickListener(new View.OnClickListener()
             {
-                btnHome.setImageResource(R.drawable.ic_arrow_back_white_36dp);
-
-                btnHome.setOnClickListener(new View.OnClickListener()
+                @Override
+                public void onClick(View v)
                 {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
-                        if(!KeyEventService.sendGlobaleKey(AccessibilityService.GLOBAL_ACTION_BACK))
-                            GenerateKeyEvent(KeyEvent.KEYCODE_BACK, false);
-                    }
-                });
-            }
-            else
-            {
-                btnHome.setImageResource(R.drawable.ic_panorama_fish_eye_white_36dp);
-
-                btnHome.setOnClickListener(new View.OnClickListener()
-                {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        handleHome();
-                    }
-                });
-            }
+                    v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+                    if(!KeyEventService.sendGlobaleKey(AccessibilityService.GLOBAL_ACTION_BACK))
+                        GenerateKeyEvent(KeyEvent.KEYCODE_BACK, false);
+                }
+            });
 
             if(getDefaultSharedPreferences("show_left_toolbar_use_system_key", false))
                 buildSystemKeys();

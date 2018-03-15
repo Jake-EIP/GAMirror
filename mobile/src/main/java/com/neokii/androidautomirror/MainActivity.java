@@ -76,11 +76,6 @@ public class MainActivity extends AppCompatPreferenceActivity
 
             bindPreferenceSummaryToValue(findPreference("action_2finger_tap"));
             //bindPreferenceSummaryToValue(findPreference("action_double_tap"));
-
-            Preference show_left_toolbar = findPreference("show_left_toolbar");
-            Preference show_left_toolbar_use_system_key = findPreference("show_left_toolbar_use_system_key");
-
-
         }
 
         @Override
@@ -144,7 +139,7 @@ public class MainActivity extends AppCompatPreferenceActivity
         try
         {
             DisplayMetrics metrics = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
 
             float w = Math.max((float)metrics.widthPixels, (float)metrics.heightPixels);
             float h = Math.min((float)metrics.widthPixels, (float)metrics.heightPixels);
@@ -195,16 +190,13 @@ public class MainActivity extends AppCompatPreferenceActivity
 
     private void updatePreference(String key)
     {
-        if(key.equals("show_left_toolbar") || key.equals("show_left_toolbar_use_system_key"))
+        if(key.equals("show_left_toolbar"))
         {
             if(SettingUtil.getBoolean(this, "show_left_toolbar", false))
             {
-                if(SettingUtil.getBoolean(this, "show_left_toolbar_use_system_key", false))
+                if(!checkAccessibilityPermissions())
                 {
-                    if(!checkAccessibilityPermissions())
-                    {
-                        requestAccessibilityPermissions();
-                    }
+                    requestAccessibilityPermissions();
                 }
             }
         }

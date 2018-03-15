@@ -50,7 +50,7 @@
     <PreferenceCategory android:title="@string/setting_category_brightness">
 
         <SwitchPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="overwrite_brightness"
             android:title="@string/setting_overwrite_brightness" />
 
