@@ -3,6 +3,9 @@ package com.neokii.androidautomirror;
 import android.content.Context;
 import android.util.Log;
 
+import com.neokii.androidautomirror.util.ShellManager;
+import com.neokii.androidautomirror.util.Util;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;

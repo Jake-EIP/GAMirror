@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.github.slashmax.aamirror.AppEntry;
 import com.github.slashmax.aamirror.AppListLoader;
+import com.neokii.androidautomirror.util.Util;
 
 import java.util.List;
 

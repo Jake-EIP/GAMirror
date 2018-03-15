@@ -1,8 +1,11 @@
 package com.neokii.androidautomirror;
 
+import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Build;
@@ -16,11 +19,15 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.accessibility.AccessibilityManager;
 
 import com.github.slashmax.aamirror.AppCompatPreferenceActivity;
+import com.neokii.androidautomirror.util.SettingUtil;
+import com.neokii.androidautomirror.util.ShellManager;
 
 import java.util.List;
 
@@ -69,6 +76,11 @@ public class MainActivity extends AppCompatPreferenceActivity
 
             bindPreferenceSummaryToValue(findPreference("action_2finger_tap"));
             //bindPreferenceSummaryToValue(findPreference("action_double_tap"));
+
+            Preference show_left_toolbar = findPreference("show_left_toolbar");
+            Preference show_left_toolbar_use_system_key = findPreference("show_left_toolbar_use_system_key");
+
+
         }
 
         @Override
@@ -113,10 +125,21 @@ public class MainActivity extends AppCompatPreferenceActivity
         super.onCreate(savedInstanceState);
 
         ShellManager.runSU("");
+        ShellManager.createAsyncShell();
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
-            actionBar.setDisplayHomeAsUpEnabled(false);
+        {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+
+            try
+            {
+                String versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+                actionBar.setTitle(getString(R.string.app_name) + " " + versionName);
+
+            }
+            catch(Exception e){}
+        }
 
         try
         {
@@ -138,10 +161,109 @@ public class MainActivity extends AppCompatPreferenceActivity
     }
 
     @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPref.registerOnSharedPreferenceChangeListener(_sharedPreferenceListener);
+    }
+
+    @Override
+    protected void onPause()
+    {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPref.unregisterOnSharedPreferenceChangeListener(_sharedPreferenceListener);
+
+        super.onPause();
+    }
+
+    @Override
     protected void onDestroy()
     {
         super.onDestroy();
     }
+
+    SharedPreferences.OnSharedPreferenceChangeListener _sharedPreferenceListener = new SharedPreferences.OnSharedPreferenceChangeListener()
+    {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
+        {
+            updatePreference(key);
+        }
+    };
+
+    private void updatePreference(String key)
+    {
+        if(key.equals("show_left_toolbar") || key.equals("show_left_toolbar_use_system_key"))
+        {
+            if(SettingUtil.getBoolean(this, "show_left_toolbar", false))
+            {
+                if(SettingUtil.getBoolean(this, "show_left_toolbar_use_system_key", false))
+                {
+                    if(!checkAccessibilityPermissions())
+                    {
+                        requestAccessibilityPermissions();
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean checkAccessibilityPermissions()
+    {
+        try
+        {
+            AccessibilityManager accessibilityManager = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
+            List<AccessibilityServiceInfo> list = accessibilityManager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.DEFAULT);
+
+            for(int i = 0; i < list.size(); i++)
+            {
+                AccessibilityServiceInfo info = list.get(i);
+
+                if(info.getResolveInfo().serviceInfo.packageName.equals(getApplication().getPackageName()))
+                {
+                    return true;
+                }
+            }
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    private boolean _pending_accessibility_dialog;
+    public void requestAccessibilityPermissions()
+    {
+        if(_pending_accessibility_dialog)
+            return;
+
+        _pending_accessibility_dialog = true;
+
+        new AlertDialog.Builder(this)
+                .setMessage(R.string.required_accessibility_permissions)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+                    }
+                })
+                .setOnDismissListener(new DialogInterface.OnDismissListener()
+                {
+                    @Override
+                    public void onDismiss(DialogInterface dialog)
+                    {
+                        _pending_accessibility_dialog = false;
+                    }
+                })
+                .show();
+    }
+
 
     private void RequestProjectionPermission()
     {
@@ -205,13 +327,5 @@ public class MainActivity extends AppCompatPreferenceActivity
         }
 
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onHeaderClick(Header header, int position)
-    {
-        super.onHeaderClick(header, position);
-
-        Log.d("qqqqqq", "onHeaderClick" + position);
     }
 }

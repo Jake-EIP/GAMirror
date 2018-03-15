@@ -1,6 +1,7 @@
 package com.neokii.androidautomirror;
 
 
+import android.accessibilityservice.AccessibilityService;
 import android.app.ActivityManager;
 import android.app.KeyguardManager;
 import android.app.UiModeManager;
@@ -13,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
 import android.media.projection.MediaProjection;
@@ -54,6 +56,7 @@ import com.github.slashmax.aamirror.TwoFingerGestureDetector;
 import com.google.android.apps.auto.sdk.CarActivity;
 import com.google.android.apps.auto.sdk.CarUiController;
 import com.google.android.apps.auto.sdk.DayNightStyle;
+import com.neokii.androidautomirror.util.ShellManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -63,6 +66,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import eu.chainfire.libsuperuser.Shell;
 
 import static android.content.Intent.ACTION_POWER_CONNECTED;
 import static android.content.Intent.ACTION_POWER_DISCONNECTED;
@@ -93,19 +98,6 @@ public class AutoActivity extends CarActivity implements
 
     private void shellExec(final String cmd)
     {
-        /*Executors.newSingleThreadExecutor().execute(new Runnable()
-        {
-            @Override
-            public void runSU()
-            {
-                if(_shell != null)
-                {
-                    Shell.SU.runSU(cmd);
-                    Log.d("Shell", cmd);
-                }
-            }
-        });*/
-
         ShellManager.runSU(cmd);
         Log.d("Shell", cmd);
     }
@@ -248,6 +240,8 @@ public class AutoActivity extends CarActivity implements
         {
             _minitouchTask = new MinitouchAsyncTask(getApplicationContext());
             _minitouchTask.execute(null, null, null);
+
+            ShellManager.createAsyncShell();
         }
 
         _minitouchSocket = new MinitouchSocket();
@@ -459,6 +453,7 @@ public class AutoActivity extends CarActivity implements
 
         if (getDefaultSharedPreferences("reset_screen_rotation_on_stop", true))
             stopOrientationService();
+
         //if (getDefaultSharedPreferences("reset_screen_size_on_stop", true))
             ResetScreenSize();
 
@@ -496,7 +491,7 @@ public class AutoActivity extends CarActivity implements
 
     private void startBrightnessService()
     {
-        boolean do_it = getDefaultSharedPreferences("overwrite_brightness", false);
+        boolean do_it = getDefaultSharedPreferences("overwrite_brightness", true);
         if (do_it)
         {
             int brightness = getDefaultSharedPreferences("overwrite_brightness_value", 0);
@@ -512,18 +507,11 @@ public class AutoActivity extends CarActivity implements
     }
 
 
-    private void GenerateKeyEvent(int keyCode, boolean longPress)
+    private void GenerateKeyEvent(final int keyCode, final boolean longPress)
     {
         Log.d(TAG, "GenerateKeyEvent");
 
-        if (longPress)
-        {
-            shellExec("input keyevent --longpress " + keyCode);
-        }
-        else
-        {
-            shellExec("input keyevent " + keyCode);
-        }
+        ShellManager.sendKey(keyCode, longPress);
     }
 
     private void SetScreenSize()
@@ -840,8 +828,7 @@ public class AutoActivity extends CarActivity implements
 
     private void killCurrentApp()
     {
-        //List<String> output = ShellManager.runSU("dumpsys window windows | grep mCurrentFocus | cut -d'/' -f1 | rev | cut -d' ' -f1 | rev");
-        List<String> output = ShellManager.runSU("dumpsys activity | grep top-activity");// | rev | cut -d'/' -f2 | cut -d' ' -f1 | rev");
+        List<String> output = Shell.SU.run("dumpsys activity | grep top-activity");// | rev | cut -d'/' -f2 | cut -d' ' -f1 | rev");
 
         Log.d(TAG, "" + output);
 
@@ -945,18 +932,49 @@ public class AutoActivity extends CarActivity implements
                 surfaceView.setRatio(w / h);
 
             _textClock = (TextView)findViewById(R.id.textClock);
+
+            Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/OpenSans-Regular.ttf");
+            _textClock.setTypeface(tf);
+
+            //_textClock.setLetterSpacing(0.1f);
+
             startTimer();
 
-            findViewById(R.id.btnHome).setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    handleHome();
-                }
-            });
+            ImageView btnHome = (ImageView)findViewById(R.id.btnHome);
 
-            buildFavorites();
+            if(_minitouchTask != null) // back key
+            {
+                btnHome.setImageResource(R.drawable.ic_arrow_back_white_36dp);
+
+                btnHome.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+                        if(!KeyEventService.sendGlobaleKey(AccessibilityService.GLOBAL_ACTION_BACK))
+                            GenerateKeyEvent(KeyEvent.KEYCODE_BACK, false);
+                    }
+                });
+            }
+            else
+            {
+                btnHome.setImageResource(R.drawable.ic_panorama_fish_eye_white_36dp);
+
+                btnHome.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        handleHome();
+                    }
+                });
+            }
+
+            if(getDefaultSharedPreferences("show_left_toolbar_use_system_key", false))
+                buildSystemKeys();
+            else
+                buildFavorites();
         }
         else
         {
@@ -988,7 +1006,7 @@ public class AutoActivity extends CarActivity implements
                     }
                 });
             }
-        }, 1000, 1000);
+        }, 500, 1000);
     }
 
     private void stopTimer()
@@ -997,9 +1015,11 @@ public class AutoActivity extends CarActivity implements
             _timer.cancel();
     }
 
+    SimpleDateFormat _formatClock = new SimpleDateFormat("h:mm", Locale.getDefault());
+
     private void handleTimer()
     {
-        _textClock.setText(new SimpleDateFormat("h:mm", Locale.getDefault()).format(new Date()));
+        _textClock.setText(_formatClock.format(new Date()));
     }
 
 
@@ -1011,15 +1031,70 @@ public class AutoActivity extends CarActivity implements
 
     ListAdapter _adapter;
 
+    private void buildSystemKeys()
+    {
+        findViewById(R.id.layoutSystemKeys).setVisibility(View.VISIBLE);
+        findViewById(R.id.layoutFavorites).setVisibility(View.GONE);
+
+
+        findViewById(R.id.btnSystemNotification).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+
+                if(!KeyEventService.sendGlobaleKey(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS))
+                    GenerateKeyEvent(KeyEvent.KEYCODE_NOTIFICATION, false);
+            }
+        });
+
+        findViewById(R.id.btnSystemAppSwitch).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+
+                if(!KeyEventService.sendGlobaleKey(AccessibilityService.GLOBAL_ACTION_RECENTS))
+                    GenerateKeyEvent(KeyEvent.KEYCODE_APP_SWITCH, false);
+            }
+        });
+
+        findViewById(R.id.btnSystemHome).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+
+                launchHome(AutoActivity.this);
+            }
+        });
+
+        findViewById(R.id.btnSystemBack).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+
+                if(!KeyEventService.sendGlobaleKey(AccessibilityService.GLOBAL_ACTION_BACK))
+                    GenerateKeyEvent(KeyEvent.KEYCODE_BACK, false);
+            }
+        });
+    }
 
     private void buildFavorites()
     {
+        findViewById(R.id.layoutSystemKeys).setVisibility(View.GONE);
+        findViewById(R.id.layoutFavorites).setVisibility(View.VISIBLE);
+
         ListView listView = (ListView)findViewById(R.id.listView);
         //listView.setVerticalSpacing(Util.DP2PX(this, 8));
         //listView.setNumColumns(1);
 
         FavoritesLoader.instance().check(this);
-
         listView.setAdapter(_adapter = new ListAdapter());
     }
 
@@ -1094,7 +1169,10 @@ public class AutoActivity extends CarActivity implements
         switch(action)
         {
             case 1:
-                GenerateKeyEvent(KeyEvent.KEYCODE_BACK, false);
+
+                if(!KeyEventService.sendGlobaleKey(AccessibilityService.GLOBAL_ACTION_BACK))
+                    GenerateKeyEvent(KeyEvent.KEYCODE_BACK, false);
+
                 break;
             case 2:
                 handleHome();

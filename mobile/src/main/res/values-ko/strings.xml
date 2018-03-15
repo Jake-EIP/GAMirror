@@ -5,11 +5,15 @@
     <string name="pref_fav_settings">즐겨찾기</string>
 
     <string name="setting_category_general">일반</string>
-        <string name="setting_show_left_toolbar">왼쪽 툴바 사용</string>
         <string name="setting_goto_home_at_start">시작시 홈화면으로 이동</string>
         <string name="setting_goto_home_at_stop">종료시 홈화면으로 이동</string>
         <string name="setting_goto_home_at_double_tap">(루팅) 두번탭하면 홈으로 이동</string>
         <string name="setting_go_back_at_2finger_tap">(루팅) 두손가락 탭하면 뒤로 이동</string>
+
+    <string name="setting_category_toolbar">툴바</string>
+        <string name="setting_show_left_toolbar">왼쪽 툴바 사용</string>
+        <string name="setting_show_left_toolbar_use_system_key">"즐겨찾기 대신 시스템 키를 표시"</string>
+
 
     <string name="setting_category_brightness">화면 밝기</string>
         <string name="setting_overwrite_brightness">기기의 밝기를 조정합니다.</string>
@@ -56,5 +60,13 @@
         <item>뒤로가기 (루팅 필요)</item>
         <item>사용중인 앱 종료 (루팅 필요)</item>
     </string-array>
+
+
+
+
+
+
+    <string name="required_accessibility_permissions">"시스템 키 이벤트를 사용하기 위해서는 접근성 권한이 요구됩니다.
+설정에서 활성화하시기 바랍니다."</string>
 
 </resources>

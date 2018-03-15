@@ -4,11 +4,6 @@
     <PreferenceCategory android:title="@string/setting_category_general">
 
         <SwitchPreference
-            android:defaultValue="false"
-            android:key="show_left_toolbar"
-            android:title="@string/setting_show_left_toolbar" />
-
-        <SwitchPreference
             android:defaultValue="true"
             android:key="goto_home_at_start"
             android:title="@string/setting_goto_home_at_start" />
@@ -36,11 +31,26 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/setting_category_toolbar">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="show_left_toolbar"
+            android:title="@string/setting_show_left_toolbar" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="show_left_toolbar_use_system_key"
+            android:dependency="show_left_toolbar"
+            android:title="@string/setting_show_left_toolbar_use_system_key" />
+
+    </PreferenceCategory>
+
 
     <PreferenceCategory android:title="@string/setting_category_brightness">
 
         <SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="overwrite_brightness"
             android:title="@string/setting_overwrite_brightness" />
 

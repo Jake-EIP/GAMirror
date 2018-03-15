@@ -5,11 +5,15 @@
     <string name="pref_fav_settings">Favourite apps</string>
 
     <string name="setting_category_general">General</string>
-        <string name="setting_show_left_toolbar">Show left toolbar</string>
         <string name="setting_goto_home_at_start">Goto home at start</string>
         <string name="setting_goto_home_at_stop">Goto home at stop</string>
         <string name="setting_goto_home_at_double_tap">(Root) Goto home at double tap</string>
         <string name="setting_go_back_at_2finger_tap">(Root) Go back at 2 finger tap</string>
+
+    <string name="setting_category_toolbar">Toolbar</string>
+        <string name="setting_show_left_toolbar">Show left toolbar</string>
+        <string name="setting_show_left_toolbar_use_system_key">"Use system keys instead of favorites."</string>
+
 
     <string name="setting_category_brightness">Brightness</string>
         <string name="setting_overwrite_brightness">Overwrite screen brightness</string>
@@ -62,7 +66,8 @@
 
 
 
-
+    <string name="required_accessibility_permissions">"Access permission is required to generate global key events.
+Please enable it in Settings."</string>
 
 
 
