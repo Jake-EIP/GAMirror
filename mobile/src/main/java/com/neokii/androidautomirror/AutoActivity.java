@@ -526,7 +526,11 @@ public class AutoActivity extends CarActivity implements
             double s_width = AutoApplication.DisplaySize.x;
             if (s_width > 0)
             {
-                SetScreenSize((int)s_width, (int)(s_width * ratio));
+                int height = (int)(s_width * ratio);
+                if(height % 2 == 1)
+                    height += 1;
+
+                SetScreenSize((int)s_width, height);
             }
         }
     }
@@ -919,17 +923,29 @@ public class AutoActivity extends CarActivity implements
     {
         stopTimer();
 
+        View toolBar = findViewById(R.id.toolBar);
         MySurfaceView surfaceView = (MySurfaceView)findViewById(R.id.m_SurfaceView);
 
         if(getDefaultSharedPreferences("show_left_toolbar", false))
         {
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+            /*if(_minitouchTask != null)
+            {
+                surfaceView.setRatio(16.f / 9.f);
+            }
+            else
+            {
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
-            float w = sharedPref.getFloat("device_landscape_width", -1);
-            float h = sharedPref.getFloat("device_landscape_height", -1);
+                float w = sharedPref.getFloat("device_landscape_width", -1);
+                float h = sharedPref.getFloat("device_landscape_height", -1);
 
-            if(w > 0 && h > 0)
-                surfaceView.setRatio(w / h);
+                if(w > 0 && h > 0)
+                    surfaceView.setRatio(w / h);
+            }*/
+
+            //surfaceView.setRatio(16.f / 9.f);
+
+            toolBar.setVisibility(View.VISIBLE);
 
             _textClock = (TextView)findViewById(R.id.textClock);
 
@@ -960,6 +976,7 @@ public class AutoActivity extends CarActivity implements
         }
         else
         {
+            toolBar.setVisibility(View.GONE);
             surfaceView.setRatio(-1);
         }
     }

@@ -119,8 +119,8 @@ public class MainActivity extends AppCompatPreferenceActivity
     {
         super.onCreate(savedInstanceState);
 
-        ShellManager.runSU("");
-        ShellManager.createAsyncShell();
+        if(ShellManager.available())
+            ShellManager.createAsyncShell();
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
@@ -136,23 +136,11 @@ public class MainActivity extends AppCompatPreferenceActivity
             catch(Exception e){}
         }
 
-        try
-        {
-            DisplayMetrics metrics = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
-
-            float w = Math.max((float)metrics.widthPixels, (float)metrics.heightPixels);
-            float h = Math.min((float)metrics.widthPixels, (float)metrics.heightPixels);
-
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putFloat("device_landscape_width", w);
-            editor.putFloat("device_landscape_height", h);
-            editor.apply();
-        }
-        catch(Exception e){}
-
         RequestProjectionPermission();
+
+        float scale = getResources().getDisplayMetrics().density;
+
+        Log.d(TAG, "scale: " + scale);
     }
 
     @Override

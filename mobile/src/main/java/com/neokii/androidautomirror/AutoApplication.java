@@ -1,8 +1,11 @@
 package com.neokii.androidautomirror;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Point;
+import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.OrientationEventListener;
 import android.view.WindowManager;
@@ -39,6 +42,22 @@ public class AutoApplication extends Application
                 UpdateScreenSizeAndRotation();
             }
         };
+
+        try
+        {
+            DisplayMetrics metrics = new DisplayMetrics();
+            m_WindowManager.getDefaultDisplay().getRealMetrics(metrics);
+
+            float w = Math.max((float)metrics.widthPixels, (float)metrics.heightPixels);
+            float h = Math.min((float)metrics.widthPixels, (float)metrics.heightPixels);
+
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putFloat("device_landscape_width", w);
+            editor.putFloat("device_landscape_height", h);
+            editor.apply();
+        }
+        catch(Exception e){}
     }
 
     @Override
