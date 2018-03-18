@@ -56,8 +56,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_alignParentBottom="true"
                     android:layout_marginBottom="8dp"
-                    android:src="@drawable/ic_arrow_back_white_36dp"
-                    style="@style/Widget.AppCompat.Button.Borderless"/>
+                    android:src="@drawable/ic_arrow_back_white_36dp"/>
 
             </RelativeLayout>
 
@@ -78,8 +77,7 @@
                     android:scaleType="center"
                     android:padding="15dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_filter_list_white_36dp"
-                    style="@style/Widget.AppCompat.Button.Borderless"/>
+                    android:src="@drawable/ic_filter_list_white_36dp"/>
 
                 <com.neokii.androidautomirror.MyImageView
                     android:id="@+id/btnSystemAppSwitch"
@@ -89,8 +87,7 @@
                     android:scaleType="center"
                     android:padding="15dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_crop_din_white_36dp"
-                    style="@style/Widget.AppCompat.Button.Borderless"/>
+                    android:src="@drawable/ic_crop_din_white_36dp"/>
 
                 <com.neokii.androidautomirror.MyImageView
                     android:id="@+id/btnSystemHome"
@@ -100,8 +97,7 @@
                     android:scaleType="center"
                     android:padding="15dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_panorama_fish_eye_white_36dp"
-                    style="@style/Widget.AppCompat.Button.Borderless"/>
+                    android:src="@drawable/ic_panorama_fish_eye_white_36dp"/>
 
                 <com.neokii.androidautomirror.MyImageView
                     android:id="@+id/btnSystemBack"

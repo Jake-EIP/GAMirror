@@ -2,6 +2,7 @@ package com.neokii.androidautomirror;
 
 
 import android.accessibilityservice.AccessibilityService;
+import android.animation.ObjectAnimator;
 import android.app.ActivityManager;
 import android.app.KeyguardManager;
 import android.app.UiModeManager;
@@ -46,6 +47,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.github.slashmax.aamirror.BrightnessService;
@@ -57,11 +59,14 @@ import com.google.android.apps.auto.sdk.CarActivity;
 import com.google.android.apps.auto.sdk.CarUiController;
 import com.google.android.apps.auto.sdk.DayNightStyle;
 import com.neokii.androidautomirror.util.ShellManager;
+import com.neokii.androidautomirror.util.Util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -283,6 +288,8 @@ public class AutoActivity extends CarActivity implements
         m_ScreenResized = false;
 
         RequestProjectionPermission();
+
+        test();
     }
 
     @Override
@@ -652,9 +659,13 @@ public class AutoActivity extends CarActivity implements
             _minitouchSocket.UpdateTouchTransformations(m_ScreenHeight, m_ScreenWidth, AutoApplication.DisplaySize);
     }
 
+    Queue<MotionEvent> _eventDown = new LinkedList<>();
+
     @Override
     public boolean onTouch(View v, MotionEvent event)
     {
+        Log.d("qqqqqq", event.getPointerCount() + ", " + event);
+
         if (_minitouchSocket != null && event != null)
         {
             if (!_minitouchSocket.isConnected())
@@ -724,10 +735,17 @@ public class AutoActivity extends CarActivity implements
                 }
             }
 
-            if (ok) _minitouchSocket.TouchCommit();
-        }
+            if(m_TwoFingerDetector.onTouchEvent(event))
+            {
+                _minitouchSocket.TouchReset();
+            }
 
-        m_TwoFingerDetector.onTouchEvent(event);
+            if(ok)
+                _minitouchSocket.TouchCommit();
+        }
+        else
+            m_TwoFingerDetector.onTouchEvent(event);
+
         _doubleTapDetector.onTouchEvent(event);
 
         return true;
@@ -918,66 +936,85 @@ public class AutoActivity extends CarActivity implements
 
 
     TextView _textClock;
+    View _toolBar;
+    boolean _toolBarVisible;
 
     private void updateLeftToolbar()
     {
         stopTimer();
 
-        View toolBar = findViewById(R.id.toolBar);
+        _toolBar = findViewById(R.id.toolBar);
         MySurfaceView surfaceView = (MySurfaceView)findViewById(R.id.m_SurfaceView);
+
+        _toolBar.bringToFront();
+
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)surfaceView.getLayoutParams();
+        params.removeRule(RelativeLayout.END_OF);
+
+        _textClock = (TextView)findViewById(R.id.textClock);
+        Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/OpenSans-Regular.ttf");
+        _textClock.setTypeface(tf);
+        startTimer();
+
+        ImageView btnBack = (ImageView)findViewById(R.id.btnBack);
+
+        btnBack.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+                if(!KeyEventService.sendGlobaleKey(AccessibilityService.GLOBAL_ACTION_BACK))
+                    GenerateKeyEvent(KeyEvent.KEYCODE_BACK, false);
+            }
+        });
 
         if(getDefaultSharedPreferences("show_left_toolbar", false))
         {
-            /*if(_minitouchTask != null)
-            {
-                surfaceView.setRatio(16.f / 9.f);
-            }
-            else
-            {
-                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+            params.addRule(RelativeLayout.END_OF, _toolBar.getId());
 
-                float w = sharedPref.getFloat("device_landscape_width", -1);
-                float h = sharedPref.getFloat("device_landscape_height", -1);
-
-                if(w > 0 && h > 0)
-                    surfaceView.setRatio(w / h);
-            }*/
-
-            //surfaceView.setRatio(16.f / 9.f);
-
-            toolBar.setVisibility(View.VISIBLE);
-
-            _textClock = (TextView)findViewById(R.id.textClock);
-
-            Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/OpenSans-Regular.ttf");
-            _textClock.setTypeface(tf);
-
-            //_textClock.setLetterSpacing(0.1f);
-
-            startTimer();
-
-            ImageView btnBack = (ImageView)findViewById(R.id.btnBack);
-
-            btnBack.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
-                    if(!KeyEventService.sendGlobaleKey(AccessibilityService.GLOBAL_ACTION_BACK))
-                        GenerateKeyEvent(KeyEvent.KEYCODE_BACK, false);
-                }
-            });
-
-            if(getDefaultSharedPreferences("show_left_toolbar_use_system_key", false))
-                buildSystemKeys();
-            else
-                buildFavorites();
+            _toolBar.setVisibility(View.VISIBLE);
         }
         else
         {
-            toolBar.setVisibility(View.GONE);
+            if(false)
+            {
+                _toolBar.setVisibility(View.VISIBLE);
+
+                _toolBarVisible = true;
+                toggleToolbar();
+            }
+            else
+            {
+                _toolBar.setVisibility(View.GONE);
+            }
+
             surfaceView.setRatio(-1);
+        }
+
+        surfaceView.setLayoutParams(params);
+
+        if(getDefaultSharedPreferences("show_left_toolbar_use_system_key", false))
+            buildSystemKeys();
+        else
+            buildFavorites();
+    }
+
+    private void toggleToolbar()
+    {
+        _toolBarVisible = !_toolBarVisible;
+
+        int diff = Util.DP2PX(this, 89);
+
+        if(_toolBarVisible)
+        {
+            ObjectAnimator.ofFloat(_toolBar, "translationX", 0, -diff)
+                    .start();
+        }
+        else
+        {
+            ObjectAnimator.ofFloat(_toolBar, "translationX", -diff, 0)
+                    .start();
         }
     }
 
@@ -1176,6 +1213,14 @@ public class AutoActivity extends CarActivity implements
             case 2:
                 handleHome();
                 break;
+
+            case 3:
+                toggleToolbar();
+                break;
         }
+    }
+
+    private void test()
+    {
     }
 }

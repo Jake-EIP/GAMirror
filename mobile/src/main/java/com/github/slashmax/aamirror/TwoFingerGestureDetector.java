@@ -68,6 +68,9 @@ public class TwoFingerGestureDetector
                     {
                         if (m_Listener != null)
                             m_Listener.onTwoFingerTapUp();
+
+                        m_EventMap.clear();
+                        return true;
                     }
                     m_EventMap.clear();
                     break;
