@@ -34,6 +34,7 @@ import android.provider.Settings;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.TextViewCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -664,8 +665,6 @@ public class AutoActivity extends CarActivity implements
     @Override
     public boolean onTouch(View v, MotionEvent event)
     {
-        Log.d("qqqqqq", event.getPointerCount() + ", " + event);
-
         if (_minitouchSocket != null && event != null)
         {
             if (!_minitouchSocket.isConnected())
@@ -747,6 +746,8 @@ public class AutoActivity extends CarActivity implements
             m_TwoFingerDetector.onTouchEvent(event);
 
         _doubleTapDetector.onTouchEvent(event);
+
+        //KeyEventService.sendKeyEvent(event);
 
         return true;
     }
@@ -939,14 +940,38 @@ public class AutoActivity extends CarActivity implements
     View _toolBar;
     boolean _toolBarVisible;
 
+    TextView _textBattery;
+    ImageView _imageBattery;
+    Intent _batteryStatus;
+
     private void updateLeftToolbar()
     {
         stopTimer();
+
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        _batteryStatus = registerReceiver(null, ifilter);
 
         _toolBar = findViewById(R.id.toolBar);
         MySurfaceView surfaceView = (MySurfaceView)findViewById(R.id.m_SurfaceView);
 
         _toolBar.bringToFront();
+
+        {
+            int left_toolbar_size = getDefaultSharedPreferences("left_toolbar_size", 89);
+            if(left_toolbar_size < 50 || left_toolbar_size > 100)
+                left_toolbar_size = 89;
+
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)_toolBar.getLayoutParams();
+            params.width = Util.DP2PX(this, left_toolbar_size);
+            _toolBar.setLayoutParams(params);
+        }
+
+        View layoutBattery = findViewById(R.id.layoutBattery);
+
+        if(getDefaultSharedPreferences("left_toolbar_show_battery_level", true))
+            layoutBattery.setVisibility(View.VISIBLE);
+        else
+            layoutBattery.setVisibility(View.GONE);
 
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)surfaceView.getLayoutParams();
         params.removeRule(RelativeLayout.END_OF);
@@ -954,6 +979,15 @@ public class AutoActivity extends CarActivity implements
         _textClock = (TextView)findViewById(R.id.textClock);
         Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/OpenSans-Regular.ttf");
         _textClock.setTypeface(tf);
+
+        TextViewCompat.setAutoSizeTextTypeWithDefaults(_textClock, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
+
+        _textBattery = (TextView)findViewById(R.id.textBattery);
+        tf = Typeface.createFromAsset(getAssets(), "fonts/OpenSans-Regular.ttf");
+        _textBattery.setTypeface(tf);
+
+        _imageBattery = (ImageView)findViewById(R.id.imageBattery);
+
         startTimer();
 
         ImageView btnBack = (ImageView)findViewById(R.id.btnBack);
@@ -1004,7 +1038,7 @@ public class AutoActivity extends CarActivity implements
     {
         _toolBarVisible = !_toolBarVisible;
 
-        int diff = Util.DP2PX(this, 89);
+        int diff = Util.DP2PX(this, 80);
 
         if(_toolBarVisible)
         {
@@ -1042,7 +1076,7 @@ public class AutoActivity extends CarActivity implements
                     }
                 });
             }
-        }, 500, 1000);
+        }, 0, 2000);
     }
 
     private void stopTimer()
@@ -1056,6 +1090,20 @@ public class AutoActivity extends CarActivity implements
     private void handleTimer()
     {
         _textClock.setText(_formatClock.format(new Date()));
+
+        int level = _batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int scale = _batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+
+        float batteryPct = level / (float)scale;
+
+        _textBattery.setText(String.format(Locale.ENGLISH, "%.0f%%", batteryPct*100.f));
+
+        int status = _batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+        boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
+                status == BatteryManager.BATTERY_STATUS_FULL;
+
+        _imageBattery.setImageResource(isCharging ? R.drawable.ic_battery_charging_full_white_18dp : R.drawable.ic_battery_std_white_18dp);
+
     }
 
 

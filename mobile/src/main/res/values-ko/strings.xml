@@ -13,6 +13,8 @@
     <string name="setting_category_toolbar">툴바</string>
         <string name="setting_show_left_toolbar">왼쪽 툴바 사용</string>
         <string name="setting_show_left_toolbar_use_system_key">"즐겨찾기 대신 시스템 키를 표시"</string>
+        <string name="setting_left_toolbar_size">"툴바 너비 (50 ~ 100)"</string>
+        <string name="setting_left_toolbar_show_battery_level">"배터리 잔량 표시"</string>
 
 
     <string name="setting_category_brightness">화면 밝기</string>

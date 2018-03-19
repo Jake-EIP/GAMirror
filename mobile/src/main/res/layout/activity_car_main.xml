@@ -7,27 +7,39 @@
 
     <RelativeLayout
         android:id="@+id/toolBar"
-        android:layout_width="89dp"
+        android:layout_width="80dp"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:background="#191F27">
 
-        <TextView
-            android:id="@+id/textClock"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/layoutTop"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_centerHorizontal="true"
-            android:textSize="30sp"
-            android:textColor="#AAAABB"
-            android:layout_marginTop="20dp"
-            />
+            android:layout_marginTop="10dp">
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/textClock"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:textSize="30sp"
+                android:maxLines="1"
+                android:textColor="#AAAABB"
+                android:gravity="center_horizontal"
+                />
+
+        </LinearLayout>
 
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_below="@id/textClock"
+            android:layout_below="@id/layoutTop"
             android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
+            android:layout_above="@+id/layoutBattery"
             >
 
             <RelativeLayout
@@ -35,8 +47,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 >
 
                 <ListView
@@ -67,7 +79,7 @@
                 android:orientation="vertical"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="20dp">
+                android:layout_marginBottom="10dp">
 
                 <com.neokii.androidautomirror.MyImageView
                     android:id="@+id/btnSystemNotification"
@@ -112,6 +124,38 @@
             </LinearLayout>
 
         </FrameLayout>
+
+        <LinearLayout
+            android:id="@id/layoutBattery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="5dp">
+
+            <ImageView
+                android:id="@+id/imageBattery"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:src="@drawable/ic_battery_std_white_18dp"
+                android:layout_gravity="center_vertical"
+                android:alpha="0.7"/>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/textBattery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:maxLines="1"
+                android:textColor="#AAAABB"
+                android:layout_gravity="center_vertical"
+                android:text="0%"
+                />
+
+        </LinearLayout>
+
+
 
     </RelativeLayout>
 

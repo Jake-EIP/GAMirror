@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
 import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Build;
@@ -20,7 +19,6 @@ import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.accessibility.AccessibilityManager;
@@ -76,6 +74,30 @@ public class MainActivity extends AppCompatPreferenceActivity
 
             bindPreferenceSummaryToValue(findPreference("action_2finger_tap"));
             //bindPreferenceSummaryToValue(findPreference("action_double_tap"));
+
+            EditTextPreference left_toolbar_size = (EditTextPreference)findPreference("left_toolbar_size");
+            bindPreferenceSummaryToValue(left_toolbar_size);
+
+            left_toolbar_size.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener()
+            {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue)
+                {
+                    try
+                    {
+                        int val = Integer.valueOf((String)newValue);
+                        if(val < 50 || val > 100)
+                            return false;
+
+                        preference.setSummary((String)newValue);
+                    }
+                    catch(Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                    return true;
+                }
+            });
         }
 
         @Override
@@ -137,10 +159,6 @@ public class MainActivity extends AppCompatPreferenceActivity
         }
 
         RequestProjectionPermission();
-
-        float scale = getResources().getDisplayMetrics().density;
-
-        Log.d(TAG, "scale: " + scale);
     }
 
     @Override

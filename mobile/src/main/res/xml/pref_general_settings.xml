@@ -44,6 +44,22 @@
             android:dependency="show_left_toolbar"
             android:title="@string/setting_show_left_toolbar_use_system_key" />
 
+        <EditTextPreference
+            android:defaultValue="89"
+            android:dependency="show_left_toolbar"
+            android:inputType="number"
+            android:key="left_toolbar_size"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/setting_left_toolbar_size" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="left_toolbar_show_battery_level"
+            android:dependency="show_left_toolbar"
+            android:title="@string/setting_left_toolbar_show_battery_level" />
+
+
     </PreferenceCategory>
 
 

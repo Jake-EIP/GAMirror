@@ -13,6 +13,8 @@
     <string name="setting_category_toolbar">Toolbar</string>
         <string name="setting_show_left_toolbar">Show left toolbar</string>
         <string name="setting_show_left_toolbar_use_system_key">"Use system keys instead of favorites."</string>
+        <string name="setting_left_toolbar_size">"Toolbar width (50 ~ 100)"</string>
+        <string name="setting_left_toolbar_show_battery_level">Show battery level</string>
 
 
     <string name="setting_category_brightness">Brightness</string>
