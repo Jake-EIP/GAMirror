@@ -24,8 +24,8 @@
                 android:id="@+id/textClock"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
+                android:paddingStart="7dp"
+                android:paddingEnd="7dp"
                 android:textSize="30sp"
                 android:maxLines="1"
                 android:textColor="#AAAABB"
@@ -35,7 +35,7 @@
         </LinearLayout>
 
         <FrameLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/layoutTop"
             android:layout_centerHorizontal="true"
@@ -44,7 +44,7 @@
 
             <RelativeLayout
                 android:id="@+id/layoutFavorites"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="5dp"
@@ -53,7 +53,7 @@
 
                 <ListView
                     android:id="@+id/listView"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_above="@+id/btnBack"
                     android:stretchMode="columnWidth"
@@ -61,65 +61,97 @@
                     android:divider="@null"
                     android:dividerHeight="0dp"/>
 
-                <com.neokii.androidautomirror.MyImageView
+                <com.neokii.androidautomirror.ButtonFrameLayout
                     android:id="@id/btnBack"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_alignParentBottom="true"
                     android:layout_marginBottom="8dp"
-                    android:src="@drawable/ic_arrow_back_white_36dp"/>
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_arrow_back_white_36dp"/>
+
+                </com.neokii.androidautomirror.ButtonFrameLayout>
 
             </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/layoutSystemKeys"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp">
 
-                <com.neokii.androidautomirror.MyImageView
+                <com.neokii.androidautomirror.ButtonFrameLayout
                     android:id="@+id/btnSystemNotification"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:scaleType="center"
-                    android:padding="15dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_filter_list_white_36dp"/>
+                    android:layout_gravity="center">
 
-                <com.neokii.androidautomirror.MyImageView
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_filter_list_white_36dp"/>
+
+                </com.neokii.androidautomirror.ButtonFrameLayout>
+
+                <com.neokii.androidautomirror.ButtonFrameLayout
                     android:id="@+id/btnSystemAppSwitch"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:scaleType="center"
-                    android:padding="15dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_crop_din_white_36dp"/>
+                    android:layout_gravity="center">
 
-                <com.neokii.androidautomirror.MyImageView
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_crop_din_white_36dp"/>
+
+                </com.neokii.androidautomirror.ButtonFrameLayout>
+
+                <com.neokii.androidautomirror.ButtonFrameLayout
                     android:id="@+id/btnSystemHome"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:scaleType="center"
-                    android:padding="15dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_panorama_fish_eye_white_36dp"/>
+                    android:layout_gravity="center">
 
-                <com.neokii.androidautomirror.MyImageView
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:scaleType="center"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_panorama_fish_eye_white_36dp"/>
+
+                </com.neokii.androidautomirror.ButtonFrameLayout>
+
+                <com.neokii.androidautomirror.ButtonFrameLayout
                     android:id="@+id/btnSystemBack"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:scaleType="center"
-                    android:padding="15dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_arrow_back_white_36dp"/>
+                    android:layout_gravity="center">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_arrow_back_white_36dp"
+                        />
+
+                </com.neokii.androidautomirror.ButtonFrameLayout>
+
 
             </LinearLayout>
 

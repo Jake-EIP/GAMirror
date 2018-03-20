@@ -34,6 +34,9 @@ import android.provider.Settings;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.Nullable;
+import android.support.car.Car;
+import android.support.car.CarConnectionCallback;
+import android.support.car.media.CarAudioManager;
 import android.support.v4.widget.TextViewCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -80,11 +83,13 @@ import static android.content.Intent.ACTION_POWER_DISCONNECTED;
 import static android.content.Intent.ACTION_SCREEN_OFF;
 import static android.content.Intent.ACTION_SCREEN_ON;
 import static android.content.Intent.ACTION_USER_PRESENT;
+import static android.media.AudioManager.AUDIOFOCUS_GAIN;
 import static android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP;
 import static android.os.PowerManager.ON_AFTER_RELEASE;
 import static android.os.PowerManager.SCREEN_DIM_WAKE_LOCK;
 import static android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION;
 import static android.provider.Settings.ACTION_MANAGE_WRITE_SETTINGS;
+import static android.support.car.media.CarAudioManager.CAR_AUDIO_USAGE_DEFAULT;
 import static android.view.MotionEvent.ACTION_CANCEL;
 import static android.view.MotionEvent.ACTION_DOWN;
 import static android.view.MotionEvent.ACTION_MOVE;
@@ -115,6 +120,7 @@ public class AutoActivity extends CarActivity implements
 
     //////////////////////////////////////////////////////////////////////////////
 
+    private Car                         m_Car;
 
     private boolean                     m_ScreenResized;
 
@@ -288,6 +294,24 @@ public class AutoActivity extends CarActivity implements
 
         m_ScreenResized = false;
 
+        m_Car = Car.createCar(this, new CarConnectionCallback()
+        {
+            @Override
+            public void onConnected(Car car)
+            {
+                Log.d(TAG, "onConnected");
+                RequestAudioFocus();
+            }
+
+            @Override
+            public void onDisconnected(Car car)
+            {
+                Log.d(TAG, "onDisconnected");
+                AbandonAudioFocus();
+            }
+        });
+        m_Car.connect();
+
         RequestProjectionPermission();
 
         test();
@@ -307,6 +331,12 @@ public class AutoActivity extends CarActivity implements
 
         if(_minitouchTask != null)
             _minitouchTask.cancel(true);
+
+        if (m_Car.isConnected())
+        {
+            AbandonAudioFocus();
+            m_Car.disconnect();
+        }
 
         stopTimer();
 
@@ -820,6 +850,34 @@ public class AutoActivity extends CarActivity implements
             startActivity(ACTION_MANAGE_OVERLAY_PERMISSION);
     }
 
+    private void RequestAudioFocus()
+    {
+        Log.d(TAG, "RequestAudioFocus");
+        try
+        {
+            CarAudioManager carAM = m_Car.getCarManager(CarAudioManager.class);
+            carAM.requestAudioFocus(null, carAM.getAudioAttributesForCarUsage(CAR_AUDIO_USAGE_DEFAULT), AUDIOFOCUS_GAIN, 0);
+        }
+        catch (Exception e)
+        {
+            Log.d(TAG, "RequestAudioFocus exception: " + e.toString());
+        }
+    }
+
+    private void AbandonAudioFocus()
+    {
+        Log.d(TAG, "AbandonAudioFocus");
+        try
+        {
+            CarAudioManager carAM = m_Car.getCarManager(CarAudioManager.class);
+            carAM.abandonAudioFocus(null, carAM.getAudioAttributesForCarUsage(CAR_AUDIO_USAGE_DEFAULT));
+        }
+        catch (Exception e)
+        {
+            Log.d(TAG, "AbandonAudioFocus exception: " + e.toString());
+        }
+    }
+
     private String getDefaultSharedPreferences(String key, @Nullable String defValue)
     {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -944,13 +1002,18 @@ public class AutoActivity extends CarActivity implements
     ImageView _imageBattery;
     Intent _batteryStatus;
 
+    BroadcastReceiver _batteryReceiver = new BroadcastReceiver()
+    {
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            _batteryStatus = intent;
+            //Log.d(TAG, "batteryReceiver onReceive: " + intent);
+        }
+    };
+
     private void updateLeftToolbar()
     {
-        stopTimer();
-
-        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        _batteryStatus = registerReceiver(null, ifilter);
-
         _toolBar = findViewById(R.id.toolBar);
         MySurfaceView surfaceView = (MySurfaceView)findViewById(R.id.m_SurfaceView);
 
@@ -990,7 +1053,7 @@ public class AutoActivity extends CarActivity implements
 
         startTimer();
 
-        ImageView btnBack = (ImageView)findViewById(R.id.btnBack);
+        View btnBack = findViewById(R.id.btnBack);
 
         btnBack.setOnClickListener(new View.OnClickListener()
         {
@@ -1038,7 +1101,7 @@ public class AutoActivity extends CarActivity implements
     {
         _toolBarVisible = !_toolBarVisible;
 
-        int diff = Util.DP2PX(this, 80);
+        int diff = _toolBar.getLayoutParams().width;
 
         if(_toolBarVisible)
         {
@@ -1058,6 +1121,8 @@ public class AutoActivity extends CarActivity implements
     private void startTimer()
     {
         stopTimer();
+
+        registerReceiver(_batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
         _timerHandler = new Handler(Looper.getMainLooper());
 
@@ -1082,7 +1147,16 @@ public class AutoActivity extends CarActivity implements
     private void stopTimer()
     {
         if(_timer != null)
+        {
             _timer.cancel();
+            _timer = null;
+        }
+
+        try
+        {
+            unregisterReceiver(_batteryReceiver);
+        }
+        catch(Exception e){}
     }
 
     SimpleDateFormat _formatClock = new SimpleDateFormat("h:mm", Locale.getDefault());
@@ -1091,18 +1165,21 @@ public class AutoActivity extends CarActivity implements
     {
         _textClock.setText(_formatClock.format(new Date()));
 
-        int level = _batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-        int scale = _batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+        if(_batteryStatus != null)
+        {
+            int level = _batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+            int scale = _batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
 
-        float batteryPct = level / (float)scale;
+            float batteryPct = level / (float)scale;
 
-        _textBattery.setText(String.format(Locale.ENGLISH, "%.0f%%", batteryPct*100.f));
+            _textBattery.setText(String.format(Locale.ENGLISH, "%.0f%%", batteryPct*100.f));
 
-        int status = _batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
-        boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
-                status == BatteryManager.BATTERY_STATUS_FULL;
+            int status = _batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+            boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
+                    status == BatteryManager.BATTERY_STATUS_FULL;
 
-        _imageBattery.setImageResource(isCharging ? R.drawable.ic_battery_charging_full_white_18dp : R.drawable.ic_battery_std_white_18dp);
+            _imageBattery.setImageResource(isCharging ? R.drawable.ic_battery_charging_full_white_18dp : R.drawable.ic_battery_std_white_18dp);
+        }
 
     }
 
