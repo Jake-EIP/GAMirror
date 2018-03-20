@@ -8,17 +8,20 @@ import android.widget.FrameLayout;
 
 public class ButtonFrameLayout extends FrameLayout
 {
-
-
     public ButtonFrameLayout(Context context)
     {
         super(context);
-        setAlpha(0.8f);
+        init();
     }
 
     public ButtonFrameLayout(Context context, @Nullable AttributeSet attrs)
     {
         super(context, attrs, 0);
+        init();
+    }
+
+    public void init()
+    {
         setAlpha(0.8f);
     }
 
@@ -28,12 +31,21 @@ public class ButtonFrameLayout extends FrameLayout
         if(event.getAction() == MotionEvent.ACTION_DOWN)
         {
             setAlpha(0.4f);
+            return true;
         }
         else if (event.getAction() == MotionEvent.ACTION_UP)
         {
             setAlpha(0.8f);
+            return true;
         }
 
         return super.onTouchEvent(event);
+    }
+
+    @Override
+    protected void onAttachedToWindow()
+    {
+        super.onAttachedToWindow();
+        init();
     }
 }

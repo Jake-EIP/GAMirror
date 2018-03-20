@@ -59,7 +59,8 @@
                     android:stretchMode="columnWidth"
                     android:layout_centerHorizontal="true"
                     android:divider="@null"
-                    android:dividerHeight="0dp"/>
+                    android:dividerHeight="0dp"
+                    />
 
                 <com.neokii.androidautomirror.ButtonFrameLayout
                     android:id="@id/btnBack"
@@ -67,9 +68,8 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="8dp"
-                    android:paddingTop="15dp"
-                    android:paddingBottom="15dp">
+                    android:paddingTop="13dp"
+                    android:paddingBottom="8dp">
 
                     <ImageView
                         android:layout_width="36dp"

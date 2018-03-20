@@ -48,6 +48,9 @@ import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -66,6 +69,7 @@ import com.neokii.androidautomirror.util.ShellManager;
 import com.neokii.androidautomirror.util.Util;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -795,8 +799,7 @@ public class AutoActivity extends CarActivity implements
                 m_ProjectionIntent = (Intent)msg.obj;
 
                 startScreenCapture();
-                RequestWriteSettingsPermission();
-                RequestOverlayPermission();
+                requestPermissions();
 
                 if(getDefaultSharedPreferences("goto_home_at_start", true))
                 {
@@ -828,26 +831,33 @@ public class AutoActivity extends CarActivity implements
             startActivityForResult(REQUEST_MEDIA_PROJECTION_PERMISSION, mediaProjectionManager.createScreenCaptureIntent());
     }
 
-    private void startActivity(String action)
+    private void requestPermissions()
     {
-        Intent intent = new Intent(action);
-        intent.setData(Uri.parse("package:" + getPackageName()));
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
+        if(Build.VERSION.SDK_INT >= 23)
+        {
+            ArrayList<Intent> intents = new ArrayList<>();
 
-    private void RequestWriteSettingsPermission()
-    {
-        Log.d(TAG, "RequestWriteSettingsPermission");
-        if (Build.VERSION.SDK_INT >= 23 && !Settings.System.canWrite(this))
-            startActivity(ACTION_MANAGE_WRITE_SETTINGS);
-    }
+            if(!Settings.System.canWrite(this))
+            {
+                Intent intent = new Intent(ACTION_MANAGE_WRITE_SETTINGS);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-    private void RequestOverlayPermission()
-    {
-        Log.d(TAG, "RequestOverlayPermission");
-        if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this))
-            startActivity(ACTION_MANAGE_OVERLAY_PERMISSION);
+                intents.add(intent);
+            }
+
+            if(!Settings.canDrawOverlays(this))
+            {
+                Intent intent = new Intent(ACTION_MANAGE_OVERLAY_PERMISSION);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                intents.add(intent);
+            }
+
+            if(intents.size() > 0)
+                startActivities(intents.toArray(new Intent[intents.size()]));
+        }
     }
 
     private void RequestAudioFocus()
@@ -1069,7 +1079,6 @@ public class AutoActivity extends CarActivity implements
         if(getDefaultSharedPreferences("show_left_toolbar", false))
         {
             params.addRule(RelativeLayout.END_OF, _toolBar.getId());
-
             _toolBar.setVisibility(View.VISIBLE);
         }
         else
@@ -1255,6 +1264,22 @@ public class AutoActivity extends CarActivity implements
         //listView.setVerticalSpacing(Util.DP2PX(this, 8));
         //listView.setNumColumns(1);
 
+        //listView.setSelector(new PaintDrawable(0xffff0000 ));
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                Animation animation = new AlphaAnimation(0.3f, 0.9f);
+                animation.setDuration(500);
+                view.startAnimation(animation);
+
+                final String packageName = FavoritesLoader.instance().getItems(getApplicationContext()).get(position);
+                handleAppClick(packageName);
+            }
+        });
+
         FavoritesLoader.instance().check(this);
         listView.setAdapter(_adapter = new ListAdapter());
     }
@@ -1290,6 +1315,8 @@ public class AutoActivity extends CarActivity implements
                 v = LayoutInflater.from(AutoActivity.this).inflate(R.layout.app_favorites_cell, parent, false);
             }
 
+            v.setAlpha(0.9f);
+
             ImageView imageIcon = v.findViewById(R.id.imageIcon);
 
             final String packageName = FavoritesLoader.instance().getItems(getApplicationContext()).get(position);
@@ -1299,15 +1326,6 @@ public class AutoActivity extends CarActivity implements
                 imageIcon.setImageDrawable(getPackageManager().getApplicationIcon(packageName));
             }
             catch(Exception e){}
-
-            imageIcon.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    handleAppClick(packageName);
-                }
-            });
 
             return v;
         }

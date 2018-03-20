@@ -27,6 +27,7 @@ import com.github.slashmax.aamirror.AppCompatPreferenceActivity;
 import com.neokii.androidautomirror.util.SettingUtil;
 import com.neokii.androidautomirror.util.ShellManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -233,14 +234,8 @@ public class MainActivity extends AppCompatPreferenceActivity
         return false;
     }
 
-    private boolean _pending_accessibility_dialog;
     public void requestAccessibilityPermissions()
     {
-        if(_pending_accessibility_dialog)
-            return;
-
-        _pending_accessibility_dialog = true;
-
         new AlertDialog.Builder(this)
                 .setMessage(R.string.required_accessibility_permissions)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
@@ -251,17 +246,8 @@ public class MainActivity extends AppCompatPreferenceActivity
                         startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
                     }
                 })
-                .setOnDismissListener(new DialogInterface.OnDismissListener()
-                {
-                    @Override
-                    public void onDismiss(DialogInterface dialog)
-                    {
-                        _pending_accessibility_dialog = false;
-                    }
-                })
                 .show();
     }
-
 
     private void RequestProjectionPermission()
     {
@@ -271,26 +257,33 @@ public class MainActivity extends AppCompatPreferenceActivity
             startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), AutoActivity.REQUEST_MEDIA_PROJECTION_PERMISSION);
     }
 
-    private void startActivity(String action)
+    private void requestPermissions()
     {
-        Intent intent = new Intent(action);
-        intent.setData(Uri.parse("package:" + getPackageName()));
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
+        if(Build.VERSION.SDK_INT >= 23)
+        {
+            ArrayList<Intent> intents = new ArrayList<>();
 
-    private void RequestWriteSettingsPermission()
-    {
-        Log.d(TAG, "RequestWriteSettingsPermission");
-        if (Build.VERSION.SDK_INT >= 23 && !Settings.System.canWrite(this))
-            startActivity(ACTION_MANAGE_WRITE_SETTINGS);
-    }
+            if(!Settings.System.canWrite(this))
+            {
+                Intent intent = new Intent(ACTION_MANAGE_WRITE_SETTINGS);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-    private void RequestOverlayPermission()
-    {
-        Log.d(TAG, "RequestOverlayPermission");
-        if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this))
-            startActivity(ACTION_MANAGE_OVERLAY_PERMISSION);
+                intents.add(intent);
+            }
+
+            if(!Settings.canDrawOverlays(this))
+            {
+                Intent intent = new Intent(ACTION_MANAGE_OVERLAY_PERMISSION);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                intents.add(intent);
+            }
+
+            if(intents.size() > 0)
+                startActivities(intents.toArray(new Intent[intents.size()]));
+        }
     }
 
     @Override
@@ -309,16 +302,7 @@ public class MainActivity extends AppCompatPreferenceActivity
                     }
                     else
                     {
-                        RequestWriteSettingsPermission();
-
-                        new Handler().post(new Runnable()
-                        {
-                            @Override
-                            public void run()
-                            {
-                                RequestOverlayPermission();
-                            }
-                        });
+                        requestPermissions();
                     }
                 }
             });
