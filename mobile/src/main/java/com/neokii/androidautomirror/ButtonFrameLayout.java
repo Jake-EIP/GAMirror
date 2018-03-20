@@ -31,12 +31,10 @@ public class ButtonFrameLayout extends FrameLayout
         if(event.getAction() == MotionEvent.ACTION_DOWN)
         {
             setAlpha(0.4f);
-            return true;
         }
         else if (event.getAction() == MotionEvent.ACTION_UP)
         {
             setAlpha(0.8f);
-            return true;
         }
 
         return super.onTouchEvent(event);
