@@ -64,8 +64,23 @@
     </string-array>
 
 
+    <string name="setting_category_action_when_power">배터리 세이버 (루팅 필요)</string>
+    <string name="setting_action_when_power_unplugged">전원 제거시</string>
+    <string name="setting_action_when_power_plugged">전원 연결시</string>
 
+    <string-array name="setting_action_when_power_unplugged">
+        <item>없음</item>
+        <item>비행기 모드 켜기</item>
+        <item>배터리 세이버 켜기</item>
+        <item>둘다 켜기</item>
+    </string-array>
 
+    <string-array name="setting_action_when_power_plugged">
+        <item>없음</item>
+        <item>비행기 모드 끄기</item>
+        <item>배터리 세이버 끄기</item>
+        <item>둘다 끄기</item>
+    </string-array>
 
 
     <string name="required_accessibility_permissions">"시스템 키 이벤트를 사용하기 위해서는 접근성 권한이 요구됩니다.

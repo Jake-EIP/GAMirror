@@ -76,6 +76,9 @@ public class MainActivity extends AppCompatPreferenceActivity
             bindPreferenceSummaryToValue(findPreference("action_2finger_tap"));
             //bindPreferenceSummaryToValue(findPreference("action_double_tap"));
 
+            bindPreferenceSummaryToValue(findPreference("action_when_power_plugged"));
+            bindPreferenceSummaryToValue(findPreference("action_when_power_unplugged"));
+
             EditTextPreference left_toolbar_size = (EditTextPreference)findPreference("left_toolbar_size");
             bindPreferenceSummaryToValue(left_toolbar_size);
 
@@ -160,6 +163,8 @@ public class MainActivity extends AppCompatPreferenceActivity
         }
 
         RequestProjectionPermission();
+
+        test();
     }
 
     @Override
@@ -309,5 +314,9 @@ public class MainActivity extends AppCompatPreferenceActivity
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void test()
+    {
     }
 }

@@ -26,6 +26,7 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.PowerManager;
@@ -68,6 +69,7 @@ import com.google.android.apps.auto.sdk.DayNightStyle;
 import com.neokii.androidautomirror.util.ShellManager;
 import com.neokii.androidautomirror.util.Util;
 
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -1365,5 +1367,20 @@ public class AutoActivity extends CarActivity implements
 
     private void test()
     {
+        try
+        {
+            Class<?> ServiceManager = Class.forName("ServiceManager");
+
+            Method getService = ServiceManager.getMethod("getService", String.class);
+
+            IBinder wmbinder = (IBinder)getService.invoke(null, "window");
+            //IWindowManager m_WndManager = IWindowManager.Stub.asInterface( wmbinder );
+
+            Log.d("qqqqqq", "" + wmbinder);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }

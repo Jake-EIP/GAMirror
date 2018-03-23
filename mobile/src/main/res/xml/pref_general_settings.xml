@@ -62,6 +62,24 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/setting_category_action_when_power">
+
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/setting_action_when_power_unplugged"
+            android:entryValues="@array/setting_action_when_power_values"
+            android:key="action_when_power_unplugged"
+            android:title="@string/setting_action_when_power_unplugged" />
+
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/setting_action_when_power_plugged"
+            android:entryValues="@array/setting_action_when_power_values"
+            android:key="action_when_power_plugged"
+            android:title="@string/setting_action_when_power_plugged" />
+
+    </PreferenceCategory>
+
 
     <PreferenceCategory android:title="@string/setting_category_brightness">
 

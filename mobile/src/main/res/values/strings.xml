@@ -63,17 +63,40 @@
         <item>Kill current app</item>
     </string-array>
 
-
-
-
-
-
     <string name="required_accessibility_permissions">"Access permission is required to generate global key events.
 Please enable it in Settings."</string>
 
 
 
+    <string name="setting_category_action_when_power">Power Saver (Root)</string>
+        <string name="setting_action_when_power_unplugged">When power unplugged</string>
+        <string name="setting_action_when_power_plugged">When power plugged</string>
 
+    <string-array name="setting_action_when_power_unplugged">
+        <item>None</item>
+        <item>Turn on airplane mode</item>
+        <item>Turn on battery saver</item>
+        <item>Both</item>
+    </string-array>
+
+    <string-array name="setting_action_when_power_plugged">
+        <item>None</item>
+        <item>Turn off airplane mode</item>
+        <item>Turn off battery saver</item>
+        <item>Both</item>
+    </string-array>
+
+
+
+
+
+    <!-- values -->
+    <string-array name="setting_action_when_power_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
 
 
     <string-array name="pref_actions_values">

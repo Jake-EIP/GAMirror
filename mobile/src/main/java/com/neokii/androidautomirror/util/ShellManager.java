@@ -24,9 +24,14 @@ public class ShellManager
                     _enabled = exitCode == 0;
                 }
             });
+        }
+    }
 
-            //_shell.addCommand("echo test");
-            //_shell.waitForIdle();
+    public static void createAsyncShell(Shell.OnCommandResultListener listener)
+    {
+        if(_shell == null)
+        {
+            _shell = new Shell.Builder().useSU().open(listener);
         }
     }
 
