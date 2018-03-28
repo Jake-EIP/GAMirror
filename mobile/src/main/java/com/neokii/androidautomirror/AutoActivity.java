@@ -178,13 +178,11 @@ public class AutoActivity extends CarActivity implements
                     OnScreenOff();
                     handleHome();
                 }
-                else if (intent.getAction().equals(UiModeManager.ACTION_EXIT_CAR_MODE))
+                /*else if (intent.getAction().equals(UiModeManager.ACTION_EXIT_CAR_MODE))
                 {
-                    //Util.toast(getApplicationContext(), UiModeManager.ACTION_EXIT_CAR_MODE);
-
                     OnScreenOff();
                     handleHome();
-                }
+                }*/
             }
         }
     }
@@ -209,8 +207,12 @@ public class AutoActivity extends CarActivity implements
         @Override
         protected void onCancelled()
         {
-            _minitouchExecutor.stop();
             super.onCancelled();
+        }
+
+        public void stop()
+        {
+            _minitouchExecutor.stop();
         }
     }
 
@@ -318,6 +320,7 @@ public class AutoActivity extends CarActivity implements
         });
         m_Car.connect();
 
+        PowerConnectionReceiver.disablePowerSaver();
         RequestProjectionPermission();
 
         test();
@@ -336,7 +339,10 @@ public class AutoActivity extends CarActivity implements
             _minitouchSocket.disconnect();
 
         if(_minitouchTask != null)
+        {
             _minitouchTask.cancel(true);
+            _minitouchTask.stop();
+        }
 
         if (m_Car.isConnected())
         {

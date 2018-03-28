@@ -29,12 +29,11 @@ public class MinitouchExecutor
     {
         Log.d(TAG, "start");
 
-        String path = install();
+        final String path = install();
         if (path == null || path.isEmpty())
             return;
 
         stop();
-
         ShellManager.runSU(path);
     }
 

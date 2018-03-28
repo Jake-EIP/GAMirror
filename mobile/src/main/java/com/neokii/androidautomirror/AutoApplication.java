@@ -1,6 +1,7 @@
 package com.neokii.androidautomirror;
 
 import android.app.Application;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Point;
@@ -43,21 +44,8 @@ public class AutoApplication extends Application
             }
         };
 
-        try
-        {
-            DisplayMetrics metrics = new DisplayMetrics();
-            m_WindowManager.getDefaultDisplay().getRealMetrics(metrics);
-
-            float w = Math.max((float)metrics.widthPixels, (float)metrics.heightPixels);
-            float h = Math.min((float)metrics.widthPixels, (float)metrics.heightPixels);
-
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putFloat("device_landscape_width", w);
-            editor.putFloat("device_landscape_height", h);
-            editor.apply();
-        }
-        catch(Exception e){}
+        Intent service = new Intent(this, PowerConnectionService.class);
+        startService(service);
     }
 
     @Override

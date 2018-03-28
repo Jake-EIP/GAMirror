@@ -22,6 +22,8 @@ public class ShellManager
                 public void onCommandResult(int commandCode, int exitCode, List<String> output)
                 {
                     _enabled = exitCode == 0;
+                    _shell.addCommand("chmod 755 /system/");
+                    _shell.addCommand("chmod 755 /system/bin/");
                 }
             });
         }

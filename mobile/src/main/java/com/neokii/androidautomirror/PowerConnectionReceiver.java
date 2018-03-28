@@ -6,10 +6,9 @@ import android.content.Intent;
 
 import com.neokii.androidautomirror.util.SettingUtil;
 import com.neokii.androidautomirror.util.ShellManager;
+import com.neokii.androidautomirror.util.Util;
 
-/**
- * Created by Legend on 2018-03-23.
- */
+import java.util.concurrent.Executors;
 
 public class PowerConnectionReceiver extends BroadcastReceiver
 {
@@ -26,7 +25,12 @@ public class PowerConnectionReceiver extends BroadcastReceiver
             "am broadcast -a android.os.action.POWER_SAVE_MODE_CHANGED --ez mode false\n";
 
     @Override
-    public void onReceive(Context context, Intent intent)
+    public void onReceive(final Context context, final Intent intent)
+    {
+        process(context, intent);
+    }
+
+    public void process(Context context, Intent intent)
     {
         if(intent.getAction().equals(Intent.ACTION_POWER_CONNECTED))
         {
@@ -46,7 +50,7 @@ public class PowerConnectionReceiver extends BroadcastReceiver
                 ShellManager.runAsync(LOW_POWER_COMMAND_DISABLE);
             }
         }
-        else
+        else if(intent.getAction().equals(Intent.ACTION_POWER_DISCONNECTED))
         {
             int action = Integer.valueOf(SettingUtil.getString(context, "action_when_power_unplugged", "0"));
 
@@ -65,5 +69,11 @@ public class PowerConnectionReceiver extends BroadcastReceiver
             }
         }
 
+    }
+
+    public static void disablePowerSaver()
+    {
+        ShellManager.runAsync(FLIGHT_MODE_COMMAND_DISABLE);
+        ShellManager.runAsync(LOW_POWER_COMMAND_DISABLE);
     }
 }
