@@ -30,7 +30,7 @@ public class PowerConnectionService extends Service
 
         filter.addAction(ACTION_POWER_CONNECTED);
         filter.addAction(ACTION_POWER_DISCONNECTED);
-        //filter.addAction(UiModeManager.ACTION_ENTER_CAR_MODE);
+        filter.addAction(UiModeManager.ACTION_ENTER_CAR_MODE);
         //filter.addAction(UiModeManager.ACTION_EXIT_CAR_MODE);
 
         registerReceiver(_receiver, filter);

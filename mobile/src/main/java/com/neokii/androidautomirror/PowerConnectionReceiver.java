@@ -1,5 +1,6 @@
 package com.neokii.androidautomirror;
 
+import android.app.UiModeManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -32,7 +33,8 @@ public class PowerConnectionReceiver extends BroadcastReceiver
 
     public void process(Context context, Intent intent)
     {
-        if(intent.getAction().equals(Intent.ACTION_POWER_CONNECTED))
+        if(intent.getAction().equals(Intent.ACTION_POWER_CONNECTED)
+                || intent.getAction().equals(UiModeManager.ACTION_ENTER_CAR_MODE))
         {
             int action = Integer.valueOf(SettingUtil.getString(context, "action_when_power_plugged", "0"));
 

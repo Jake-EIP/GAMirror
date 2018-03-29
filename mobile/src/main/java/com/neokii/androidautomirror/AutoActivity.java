@@ -320,7 +320,6 @@ public class AutoActivity extends CarActivity implements
         });
         m_Car.connect();
 
-        PowerConnectionReceiver.disablePowerSaver();
         RequestProjectionPermission();
 
         test();
