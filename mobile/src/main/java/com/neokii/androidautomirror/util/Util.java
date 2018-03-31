@@ -1,5 +1,6 @@
 package com.neokii.androidautomirror.util;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.widget.Toast;
 
@@ -57,5 +58,22 @@ public class Util
             Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
         }
         catch(Exception e){}
+    }
+
+    public static boolean setBluetooth(boolean enable)
+    {
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        boolean isEnabled = bluetoothAdapter.isEnabled();
+        if(enable && !isEnabled)
+        {
+            return bluetoothAdapter.enable();
+        }
+        else if(!enable && isEnabled)
+        {
+            return bluetoothAdapter.disable();
+        }
+
+        return true;
     }
 }

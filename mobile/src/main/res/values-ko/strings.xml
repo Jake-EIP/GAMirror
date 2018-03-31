@@ -48,7 +48,7 @@
     <string-array name="pref_immersive_list_titles">
         <item>사용안함</item>
         <item>상태바 숨김</item>
-        <item>네비게이션바 숨김</item>
+        <item>소프트키 숨김</item>
         <item>전체 숨김</item>
     </string-array>
 
