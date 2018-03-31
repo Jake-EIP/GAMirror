@@ -30,7 +30,7 @@
 
 
     <string name="setting_category_screen_size">화면 크기 (루팅 필요)</string>
-        <string name="setting_immersive_mode">네비게이션바, 상단상태바 숨김 (루팅 필요)</string>
+        <string name="setting_immersive_mode">상태바, 소프트키 숨김 (루팅 필요)</string>
 
     <string-array name="pref_orientation_list_titles">
         <item>기기의 회전 방향에 따름</item>
