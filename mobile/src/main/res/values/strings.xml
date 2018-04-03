@@ -64,6 +64,7 @@
         <item>None</item>
         <item>Back</item>
         <item>Kill current app</item>
+        <item>Go to Home</item>
     </string-array>
 
     <string name="required_accessibility_permissions">"Access permission is required to generate global key events.
@@ -106,6 +107,7 @@ Please enable it in Settings."</string>
         <item>0</item>
         <item>1</item>
         <item>2</item>
+        <item>3</item>
     </string-array>
 
     <string-array name="pref_orientation_list_values">

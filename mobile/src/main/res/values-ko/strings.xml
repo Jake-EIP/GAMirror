@@ -64,6 +64,7 @@
         <item>사용하지 않음</item>
         <item>뒤로가기 (루팅 필요)</item>
         <item>사용중인 앱 종료 (루팅 필요)</item>
+        <item>홈으로 나가기</item>
     </string-array>
 
 

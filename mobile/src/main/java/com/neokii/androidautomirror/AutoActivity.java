@@ -1377,7 +1377,7 @@ public class AutoActivity extends CarActivity implements
                 break;
 
             case 3:
-                toggleToolbar();
+                launchHome(getApplicationContext());
                 break;
         }
     }
