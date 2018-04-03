@@ -6,8 +6,8 @@ android {
         applicationId "com.neokii.androidautomirror"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 1102
-        versionName "1.1.0"
+        versionCode 1110
+        versionName "1.1.1"
 
     }
     buildTypes {

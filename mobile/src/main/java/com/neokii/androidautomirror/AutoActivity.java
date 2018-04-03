@@ -39,6 +39,7 @@ import android.support.car.Car;
 import android.support.car.CarConnectionCallback;
 import android.support.car.media.CarAudioManager;
 import android.support.v4.widget.TextViewCompat;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -66,6 +67,7 @@ import com.github.slashmax.aamirror.TwoFingerGestureDetector;
 import com.google.android.apps.auto.sdk.CarActivity;
 import com.google.android.apps.auto.sdk.CarUiController;
 import com.google.android.apps.auto.sdk.DayNightStyle;
+import com.neokii.androidautomirror.util.SettingUtil;
 import com.neokii.androidautomirror.util.ShellManager;
 import com.neokii.androidautomirror.util.Util;
 
@@ -116,6 +118,7 @@ public class AutoActivity extends CarActivity implements
     private void shellExec(final String cmd)
     {
         ShellManager.runSU(cmd);
+        //ShellManager.runAsync(cmd);
         Log.d("Shell", cmd);
     }
 
@@ -815,8 +818,29 @@ public class AutoActivity extends CarActivity implements
                         public void run()
                         {
                             AutoActivity.launchHome(getApplicationContext());
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    String launch_app_at_start = SettingUtil.getString(getApplicationContext(), "launch_app_at_start");
+                                    if(!TextUtils.isEmpty(launch_app_at_start))
+                                    {
+                                        Util.openApp(getApplicationContext(), launch_app_at_start, false);
+                                    }
+                                }
+                            }, 500);
+
                         }
                     }, 1000);
+                }
+                else
+                {
+                    String launch_app_at_start = SettingUtil.getString(getApplicationContext(), "launch_app_at_start");
+                    if(!TextUtils.isEmpty(launch_app_at_start))
+                    {
+                        Util.openApp(getApplicationContext(), launch_app_at_start, false);
+                    }
                 }
             }
         }
@@ -925,52 +949,41 @@ public class AutoActivity extends CarActivity implements
 
     private void killCurrentApp()
     {
-        List<String> output = Shell.SU.run("dumpsys activity | grep top-activity");// | rev | cut -d'/' -f2 | cut -d' ' -f1 | rev");
-
-        Log.d(TAG, "" + output);
-
         try
         {
-            Pattern pattern = Pattern.compile(".* \\d+:(.*)/.*");
-            Matcher matcher = pattern.matcher(output.get(0));
-            if (matcher.find())
+            final String packageName = Util.getCurrentApp();
+
+            Log.d(TAG, "killCurrentApp: " + packageName);
+
+            Intent intent= new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            ResolveInfo defaultLauncher= getPackageManager().resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
+            String nameOfLauncherPkg= defaultLauncher.activityInfo.packageName;
+
+            Log.d(TAG, nameOfLauncherPkg + ", " + packageName);
+
+            if(packageName.equals(getPackageName()) || packageName.equals(nameOfLauncherPkg))
             {
-                final String packageName = matcher.group(1).trim();
-
-                Intent intent= new Intent(Intent.ACTION_MAIN);
-                intent.addCategory(Intent.CATEGORY_HOME);
-                ResolveInfo defaultLauncher= getPackageManager().resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
-                String nameOfLauncherPkg= defaultLauncher.activityInfo.packageName;
-
-                Log.d(TAG, nameOfLauncherPkg + ", " + packageName);
-
-                if(packageName.equals(getPackageName()) || packageName.equals(nameOfLauncherPkg))
-                {
-                    return;
-                }
-
-                ShellManager.runSU("am force-stop " + packageName);
-                //ShellManager.runSU("kill " + pid);
-                //Util.killProcess(packageName);
-
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        try
-                        {
-                            ActivityManager am = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
-                            am.killBackgroundProcesses(packageName);
-                        }
-                        catch(Exception e){}
-                    }
-                }, 1000);
+                return;
             }
 
-            String[] token = output.get(0).split(":");
+            ShellManager.runSU("am force-stop " + packageName);
+            //ShellManager.runSU("kill " + pid);
+            //Util.killProcess(packageName);
 
-
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        ActivityManager am = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
+                        am.killBackgroundProcesses(packageName);
+                    }
+                    catch(Exception e){}
+                }
+            }, 1000);
         }
         catch(Exception e)
         {
@@ -1371,20 +1384,5 @@ public class AutoActivity extends CarActivity implements
 
     private void test()
     {
-        try
-        {
-            Class<?> ServiceManager = Class.forName("ServiceManager");
-
-            Method getService = ServiceManager.getMethod("getService", String.class);
-
-            IBinder wmbinder = (IBinder)getService.invoke(null, "window");
-            //IWindowManager m_WndManager = IWindowManager.Stub.asInterface( wmbinder );
-
-            Log.d("qqqqqq", "" + wmbinder);
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
     }
 }

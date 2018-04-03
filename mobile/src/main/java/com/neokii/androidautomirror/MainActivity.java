@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Build;
@@ -19,6 +21,7 @@ import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.accessibility.AccessibilityManager;
@@ -61,6 +64,20 @@ public class MainActivity extends AppCompatPreferenceActivity
     public static class GeneralPreferenceFragment extends PreferenceFragment
     {
 
+        SharedPreferences.OnSharedPreferenceChangeListener _listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+
+                if(key.equals("launch_app_at_start"))
+                {
+                    Preference launch_app_at_start = findPreference(key);
+
+                    String packageName = SettingUtil.getString(getActivity(), launch_app_at_start.getKey(), "");
+                    launch_app_at_start.setSummary(getSummary(packageName));
+                }
+            }
+        };
+
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState)
         {
@@ -102,6 +119,55 @@ public class MainActivity extends AppCompatPreferenceActivity
                     return true;
                 }
             });
+
+            Preference launch_app_at_start = findPreference("launch_app_at_start");
+
+            //bindPreferenceSummaryToValue(launch_app_at_start);
+            launch_app_at_start.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference)
+                {
+                    AppSelectDialog dialog = new AppSelectDialog();
+                    dialog.show(getFragmentManager(), null);
+
+                    return false;
+                }
+            });
+
+            String packageName = SettingUtil.getString(getActivity(), launch_app_at_start.getKey(), "");
+            launch_app_at_start.setSummary(getSummary(packageName));
+            PreferenceManager.getDefaultSharedPreferences(getActivity()).registerOnSharedPreferenceChangeListener(_listener);
+        }
+
+        @Override
+        public void onDestroy()
+        {
+            super.onDestroy();
+
+            PreferenceManager.getDefaultSharedPreferences(getActivity()).unregisterOnSharedPreferenceChangeListener(_listener);
+        }
+
+        private String getSummary(String packageName)
+        {
+            if(TextUtils.isEmpty(packageName))
+                return getString(R.string.do_not_use);
+
+            String appName = getAppName(packageName);
+            return "" + appName + " (" + packageName + ")";
+        }
+
+        private String getAppName(String packageName)
+        {
+            try
+            {
+                final PackageManager pm = getActivity().getPackageManager();
+
+                return pm.getApplicationLabel(pm.getApplicationInfo(packageName, 0)).toString();
+            }
+            catch (Exception e)
+            {}
+
+            return null;
         }
 
         @Override

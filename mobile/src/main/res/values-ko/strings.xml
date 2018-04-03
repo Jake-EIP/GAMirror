@@ -1,12 +1,15 @@
 <resources>
     <string name="app_name">GAMirror</string>
 
+    <string name="do_not_use">사용하지 않음</string>
+
     <string name="pref_general_settings">설정</string>
     <string name="pref_fav_settings">즐겨찾기</string>
 
     <string name="setting_category_general">일반</string>
         <string name="setting_goto_home_at_start">시작시 홈화면으로 이동</string>
         <string name="setting_goto_home_at_stop">종료시 홈화면으로 이동</string>
+        <string name="setting_launch_app_at_start">시작시 지정된 앱 실행</string>
         <string name="setting_goto_home_at_double_tap">(루팅) 두번탭하면 홈으로 이동</string>
         <string name="setting_go_back_at_2finger_tap">(루팅) 두손가락 탭하면 뒤로 이동</string>
 

@@ -13,6 +13,11 @@
             android:key="goto_home_at_stop"
             android:title="@string/setting_goto_home_at_stop" />
 
+        <Preference
+            android:key="launch_app_at_start"
+            android:title="@string/setting_launch_app_at_start"
+            />
+
         <!--ListPreference
             android:defaultValue="1"
             android:entries="@array/pref_actions"
