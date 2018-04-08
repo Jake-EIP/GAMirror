@@ -1,9 +1,9 @@
-package com.neokii.androidautomirror;
+package com.android.gami;
 
 import android.app.DialogFragment;
 
 import com.github.slashmax.aamirror.AppEntry;
-import com.neokii.androidautomirror.util.SettingUtil;
+import com.android.gami.util.SettingUtil;
 
 /**
  * Created by Legend on 2018-04-03.

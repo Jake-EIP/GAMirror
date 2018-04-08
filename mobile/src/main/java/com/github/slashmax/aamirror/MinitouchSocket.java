@@ -5,6 +5,8 @@ import android.net.LocalSocket;
 import android.net.LocalSocketAddress;
 import android.util.Log;
 
+import com.android.gami.MinitouchExecutor;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
@@ -13,7 +15,7 @@ import java.net.Socket;
 public class MinitouchSocket
 {
     private static final String TAG = "MinitouchSocket";
-    private static final String DEFAULT_SOCKET_NAME = "minitouch";
+    private static final String DEFAULT_SOCKET_NAME = MinitouchExecutor.NAME;
 
     private LocalSocket m_SocketLocal;
     private Socket m_SocketTcp;

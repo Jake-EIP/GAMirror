@@ -10,7 +10,7 @@
         android:layout_width="80dp"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
-        android:background="#191F27">
+        android:background="#90000000">
 
         <LinearLayout
             android:id="@+id/layoutTop"
@@ -28,9 +28,38 @@
                 android:paddingEnd="7dp"
                 android:textSize="30sp"
                 android:maxLines="1"
-                android:textColor="#AAAABB"
+                android:textColor="#F0F0F0"
                 android:gravity="center_horizontal"
+                android:text="00:00"
                 />
+
+            <LinearLayout
+                android:id="@+id/layoutBattery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:id="@+id/imageBattery"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/ic_battery_std_white_18dp"
+                    android:layout_gravity="center_vertical"
+                    android:alpha="0.7"/>
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/textBattery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:maxLines="1"
+                    android:textColor="#F0F0F0"
+                    android:layout_gravity="center_vertical"
+                    android:text="0%"
+                    />
+
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -39,7 +68,7 @@
             android:layout_height="match_parent"
             android:layout_below="@id/layoutTop"
             android:layout_centerHorizontal="true"
-            android:layout_above="@+id/layoutBattery"
+            android:layout_alignParentBottom="true"
             >
 
             <RelativeLayout
@@ -62,7 +91,7 @@
                     android:dividerHeight="0dp"
                     />
 
-                <com.neokii.androidautomirror.ButtonFrameLayout
+                <com.android.gami.ButtonFrameLayout
                     android:id="@id/btnBack"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -77,7 +106,7 @@
                         android:layout_gravity="center"
                         android:src="@drawable/ic_arrow_back_white_36dp"/>
 
-                </com.neokii.androidautomirror.ButtonFrameLayout>
+                </com.android.gami.ButtonFrameLayout>
 
             </RelativeLayout>
 
@@ -90,7 +119,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp">
 
-                <com.neokii.androidautomirror.ButtonFrameLayout
+                <com.android.gami.ButtonFrameLayout
                     android:id="@+id/btnSystemNotification"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
@@ -103,9 +132,9 @@
                         android:layout_gravity="center"
                         android:src="@drawable/ic_filter_list_white_36dp"/>
 
-                </com.neokii.androidautomirror.ButtonFrameLayout>
+                </com.android.gami.ButtonFrameLayout>
 
-                <com.neokii.androidautomirror.ButtonFrameLayout
+                <com.android.gami.ButtonFrameLayout
                     android:id="@+id/btnSystemAppSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
@@ -118,9 +147,9 @@
                         android:layout_gravity="center"
                         android:src="@drawable/ic_crop_din_white_36dp"/>
 
-                </com.neokii.androidautomirror.ButtonFrameLayout>
+                </com.android.gami.ButtonFrameLayout>
 
-                <com.neokii.androidautomirror.ButtonFrameLayout
+                <com.android.gami.ButtonFrameLayout
                     android:id="@+id/btnSystemHome"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
@@ -134,9 +163,9 @@
                         android:layout_gravity="center"
                         android:src="@drawable/ic_panorama_fish_eye_white_36dp"/>
 
-                </com.neokii.androidautomirror.ButtonFrameLayout>
+                </com.android.gami.ButtonFrameLayout>
 
-                <com.neokii.androidautomirror.ButtonFrameLayout
+                <com.android.gami.ButtonFrameLayout
                     android:id="@+id/btnSystemBack"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
@@ -150,53 +179,42 @@
                         android:src="@drawable/ic_arrow_back_white_36dp"
                         />
 
-                </com.neokii.androidautomirror.ButtonFrameLayout>
+                </com.android.gami.ButtonFrameLayout>
 
 
             </LinearLayout>
 
         </FrameLayout>
 
-        <LinearLayout
-            android:id="@id/layoutBattery"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="5dp">
 
-            <ImageView
-                android:id="@+id/imageBattery"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:src="@drawable/ic_battery_std_white_18dp"
-                android:layout_gravity="center_vertical"
-                android:alpha="0.7"/>
-
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/textBattery"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:maxLines="1"
-                android:textColor="#AAAABB"
-                android:layout_gravity="center_vertical"
-                android:text="0%"
-                />
-
-        </LinearLayout>
 
 
 
     </RelativeLayout>
 
-    <com.neokii.androidautomirror.MySurfaceView
-        android:id="@+id/m_SurfaceView"
+    <com.android.gami.MyFrameLayout
+        android:id="@+id/layoutSurface"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_toEndOf="@id/toolBar"
         android:layout_alignParentEnd="true"
-        android:focusable="true" />
+        >
+
+        <com.android.gami.MySurfaceView
+            android:id="@+id/m_SurfaceView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusable="true" />
+
+        <View
+            android:id="@+id/btnOpenMenu"
+            android:layout_width="35dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom"
+            android:background="#00000000"
+            />
+
+    </com.android.gami.MyFrameLayout>
+
 
 </RelativeLayout>

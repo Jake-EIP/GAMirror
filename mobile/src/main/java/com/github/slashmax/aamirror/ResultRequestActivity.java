@@ -8,8 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import com.neokii.androidautomirror.AutoActivity;
-import com.neokii.androidautomirror.R;
+import com.android.gami.R;
 
 public class ResultRequestActivity extends Activity
 {

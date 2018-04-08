@@ -1,10 +1,10 @@
-package com.neokii.androidautomirror;
+package com.android.gami;
 
 import android.content.Context;
 import android.util.Log;
 
-import com.neokii.androidautomirror.util.ShellManager;
-import com.neokii.androidautomirror.util.Util;
+import com.android.gami.util.ShellManager;
+import com.android.gami.util.Util;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,6 +16,8 @@ import eu.chainfire.libsuperuser.Shell;
 public class MinitouchExecutor
 {
     private static final String TAG = "MinitouchExecutor";
+
+    public static final String NAME = "minitouch_ga";
 
     private Context m_Context;
 
@@ -34,25 +36,29 @@ public class MinitouchExecutor
             return;
 
         stop();
-        ShellManager.runSU(path);
+
+        String pp = path + " -n " + NAME;
+        Log.d(TAG, "run: " + pp);
+
+        ShellManager.runSU(pp);
     }
 
     public void stop()
     {
-        Util.killProcess("minitouch");
+        Util.killProcess(NAME);
     }
 
     private String install()
     {
         Log.d(TAG, "install");
 
-        File file = m_Context.getFileStreamPath("minitouch");
+        File file = m_Context.getFileStreamPath(NAME);
         if(file.exists())
             return file.getAbsolutePath();
 
         try
         {
-            FileOutputStream fileOutputStream = m_Context.openFileOutput("minitouch", 0);
+            FileOutputStream fileOutputStream = m_Context.openFileOutput(NAME, 0);
             String assetName = getAssetFile();
             InputStream assetFile = m_Context.getAssets().open(assetName);
             byte[] buffer = new byte[1024];

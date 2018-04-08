@@ -1,4 +1,4 @@
-package com.neokii.androidautomirror;
+package com.android.gami;
 
 import com.google.android.apps.auto.sdk.CarActivity;
 import com.google.android.apps.auto.sdk.CarActivityService;

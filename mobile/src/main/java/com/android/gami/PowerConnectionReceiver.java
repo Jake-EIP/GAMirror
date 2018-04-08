@@ -1,15 +1,12 @@
-package com.neokii.androidautomirror;
+package com.android.gami;
 
 import android.app.UiModeManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.neokii.androidautomirror.util.SettingUtil;
-import com.neokii.androidautomirror.util.ShellManager;
-import com.neokii.androidautomirror.util.Util;
-
-import java.util.concurrent.Executors;
+import com.android.gami.util.SettingUtil;
+import com.android.gami.util.ShellManager;
 
 public class PowerConnectionReceiver extends BroadcastReceiver
 {

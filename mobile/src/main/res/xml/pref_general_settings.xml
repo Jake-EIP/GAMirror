@@ -44,13 +44,29 @@
             android:title="@string/setting_show_left_toolbar" />
 
         <SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
+            android:key="left_toolbar_floating"
+            android:dependency="show_left_toolbar"
+            android:title="@string/setting_left_toolbar_floating"
+            android:summary="@string/setting_left_toolbar_floating_desc"/>
+
+        <EditTextPreference
+            android:defaultValue="5"
+            android:dependency="left_toolbar_floating"
+            android:inputType="number"
+            android:key="left_toolbar_auto_hide_time"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/setting_left_toolbar_auto_hide_time" />
+
+        <SwitchPreference
+            android:defaultValue="true"
             android:key="show_left_toolbar_use_system_key"
             android:dependency="show_left_toolbar"
             android:title="@string/setting_show_left_toolbar_use_system_key" />
 
         <EditTextPreference
-            android:defaultValue="89"
+            android:defaultValue="70"
             android:dependency="show_left_toolbar"
             android:inputType="number"
             android:key="left_toolbar_size"
@@ -63,7 +79,6 @@
             android:key="left_toolbar_show_battery_level"
             android:dependency="show_left_toolbar"
             android:title="@string/setting_left_toolbar_show_battery_level" />
-
 
     </PreferenceCategory>
 
@@ -85,6 +100,16 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/setting_category_audio">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="request_audio_focus_at_start"
+            android:title="@string/setting_request_audio_focus_at_start"
+            android:summary="@string/setting_request_audio_focus_at_start_desc"
+            />
+
+    </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/setting_category_brightness">
 

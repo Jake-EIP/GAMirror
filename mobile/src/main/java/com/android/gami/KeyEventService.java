@@ -1,4 +1,4 @@
-package com.neokii.androidautomirror;
+package com.android.gami;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.Intent;

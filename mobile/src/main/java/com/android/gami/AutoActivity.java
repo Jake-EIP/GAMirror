@@ -1,4 +1,4 @@
-package com.neokii.androidautomirror;
+package com.android.gami;
 
 
 import android.accessibilityservice.AccessibilityService;
@@ -26,7 +26,6 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.PowerManager;
@@ -67,24 +66,18 @@ import com.github.slashmax.aamirror.TwoFingerGestureDetector;
 import com.google.android.apps.auto.sdk.CarActivity;
 import com.google.android.apps.auto.sdk.CarUiController;
 import com.google.android.apps.auto.sdk.DayNightStyle;
-import com.neokii.androidautomirror.util.SettingUtil;
-import com.neokii.androidautomirror.util.ShellManager;
-import com.neokii.androidautomirror.util.Util;
+import com.android.gami.util.SettingUtil;
+import com.android.gami.util.ShellManager;
+import com.android.gami.util.Util;
 
-import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import eu.chainfire.libsuperuser.Shell;
 
 import static android.content.Intent.ACTION_POWER_CONNECTED;
 import static android.content.Intent.ACTION_POWER_DISCONNECTED;
@@ -336,6 +329,8 @@ public class AutoActivity extends CarActivity implements
     @Override
     public void onDestroy()
     {
+        stopToolbarHideTimer();
+
         if(_minitouchSocket != null)
             _minitouchSocket.disconnect();
 
@@ -783,14 +778,16 @@ public class AutoActivity extends CarActivity implements
             }
 
             if(ok)
+            {
                 _minitouchSocket.TouchCommit();
+            }
         }
         else
             m_TwoFingerDetector.onTouchEvent(event);
 
         _doubleTapDetector.onTouchEvent(event);
 
-        //KeyEventService.sendKeyEvent(event);
+        resetToolbarHideTimer();
 
         return true;
     }
@@ -892,15 +889,18 @@ public class AutoActivity extends CarActivity implements
 
     private void RequestAudioFocus()
     {
-        Log.d(TAG, "RequestAudioFocus");
-        try
+        if(getDefaultSharedPreferences("request_audio_focus_at_start", false))
         {
-            CarAudioManager carAM = m_Car.getCarManager(CarAudioManager.class);
-            carAM.requestAudioFocus(null, carAM.getAudioAttributesForCarUsage(CAR_AUDIO_USAGE_DEFAULT), AUDIOFOCUS_GAIN, 0);
-        }
-        catch (Exception e)
-        {
-            Log.d(TAG, "RequestAudioFocus exception: " + e.toString());
+            Log.d(TAG, "RequestAudioFocus");
+            try
+            {
+                CarAudioManager carAM = m_Car.getCarManager(CarAudioManager.class);
+                carAM.requestAudioFocus(null, carAM.getAudioAttributesForCarUsage(CAR_AUDIO_USAGE_DEFAULT), AUDIOFOCUS_GAIN, 0);
+            }
+            catch (Exception e)
+            {
+                Log.d(TAG, "RequestAudioFocus exception: " + e.toString());
+            }
         }
     }
 
@@ -1041,17 +1041,94 @@ public class AutoActivity extends CarActivity implements
         }
     };
 
+    //Timer _timerToolbarHide;
+    Handler _handlerToolbarHide = new Handler();
+    Runnable _runnableToolbarHide = new Runnable() {
+        @Override
+        public void run()
+        {
+            stopToolbarHideTimer();
+
+            if(_toolBarVisible)
+                toggleToolbar();
+        }
+    };
+
+    long _left_toolbar_auto_hide_time = -100;
+    boolean _postedHideToolbar = false;
+    Handler _handlerPostDelay = new Handler();
+
+    private void resetToolbarHideTimer()
+    {
+        if(!_toolBarVisible)
+            return;
+
+        if(_left_toolbar_auto_hide_time == -100)
+            _left_toolbar_auto_hide_time = getDefaultSharedPreferences("left_toolbar_auto_hide_time", 5) * 1000;
+
+        if(_left_toolbar_auto_hide_time < 1000)
+            return;
+
+        stopToolbarHideTimer();
+
+        if(_postedHideToolbar)
+            return;
+
+        _postedHideToolbar = true;
+
+        _handlerPostDelay.postDelayed(new Runnable() {
+            @Override
+            public void run()
+            {
+                _postedHideToolbar = false;
+                resetToolbarHideTimerImpl();
+            }
+        }, 300);
+    }
+
+    private void resetToolbarHideTimerImpl()
+    {
+        Log.d(TAG, "resetToolbarHideTimerImpl");
+        _handlerToolbarHide.postDelayed(_runnableToolbarHide, _left_toolbar_auto_hide_time);
+    }
+
+    private void stopToolbarHideTimer()
+    {
+        try
+        {
+            _handlerToolbarHide.removeCallbacks(_runnableToolbarHide);
+        }
+        catch (Exception e){}
+    }
+
     private void updateLeftToolbar()
     {
         _toolBar = findViewById(R.id.toolBar);
-        MySurfaceView surfaceView = (MySurfaceView)findViewById(R.id.m_SurfaceView);
+        //MySurfaceView surfaceView = (MySurfaceView)findViewById(R.id.m_SurfaceView);
+        MyFrameLayout layoutSurface = (MyFrameLayout)findViewById(R.id.layoutSurface);
+        View btnOpenMenu = findViewById(R.id.btnOpenMenu);
+        btnOpenMenu.setVisibility(View.GONE);
+
+        btnOpenMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleToolbar();
+            }
+        });
+
+        _toolBar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleToolbar();
+            }
+        });
 
         _toolBar.bringToFront();
 
         {
-            int left_toolbar_size = getDefaultSharedPreferences("left_toolbar_size", 89);
+            int left_toolbar_size = getDefaultSharedPreferences("left_toolbar_size", 70);
             if(left_toolbar_size < 50 || left_toolbar_size > 100)
-                left_toolbar_size = 89;
+                left_toolbar_size = 70;
 
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)_toolBar.getLayoutParams();
             params.width = Util.DP2PX(this, left_toolbar_size);
@@ -1065,7 +1142,7 @@ public class AutoActivity extends CarActivity implements
         else
             layoutBattery.setVisibility(View.GONE);
 
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)surfaceView.getLayoutParams();
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)layoutSurface.getLayoutParams();
         params.removeRule(RelativeLayout.END_OF);
 
         _textClock = (TextView)findViewById(R.id.textClock);
@@ -1092,34 +1169,35 @@ public class AutoActivity extends CarActivity implements
                 v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                 if(!KeyEventService.sendGlobaleKey(AccessibilityService.GLOBAL_ACTION_BACK))
                     GenerateKeyEvent(KeyEvent.KEYCODE_BACK, false);
+
+                resetToolbarHideTimer();
             }
         });
 
         if(getDefaultSharedPreferences("show_left_toolbar", false))
         {
-            params.addRule(RelativeLayout.END_OF, _toolBar.getId());
-            _toolBar.setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            if(false)
+            if(SettingUtil.getBoolean(this, "left_toolbar_floating", true))
             {
+                btnOpenMenu.setVisibility(View.VISIBLE);
                 _toolBar.setVisibility(View.VISIBLE);
-
                 _toolBarVisible = true;
                 toggleToolbar();
             }
             else
             {
-                _toolBar.setVisibility(View.GONE);
+                params.addRule(RelativeLayout.END_OF, _toolBar.getId());
+                _toolBar.setVisibility(View.VISIBLE);
             }
-
-            surfaceView.setRatio(-1);
+        }
+        else
+        {
+            _toolBar.setVisibility(View.GONE);
+            layoutSurface.setRatio(-1);
         }
 
-        surfaceView.setLayoutParams(params);
+        layoutSurface.setLayoutParams(params);
 
-        if(getDefaultSharedPreferences("show_left_toolbar_use_system_key", false))
+        if(getDefaultSharedPreferences("show_left_toolbar_use_system_key", true))
             buildSystemKeys();
         else
             buildFavorites();
@@ -1133,13 +1211,17 @@ public class AutoActivity extends CarActivity implements
 
         if(_toolBarVisible)
         {
-            ObjectAnimator.ofFloat(_toolBar, "translationX", 0, -diff)
+            ObjectAnimator.ofFloat(_toolBar, "translationX", -diff, 0)
                     .start();
+
+            resetToolbarHideTimer();
         }
         else
         {
-            ObjectAnimator.ofFloat(_toolBar, "translationX", -diff, 0)
+            ObjectAnimator.ofFloat(_toolBar, "translationX", 0, -diff)
                     .start();
+
+            stopToolbarHideTimer();
         }
     }
 
@@ -1235,6 +1317,8 @@ public class AutoActivity extends CarActivity implements
 
                 if(!KeyEventService.sendGlobaleKey(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS))
                     GenerateKeyEvent(KeyEvent.KEYCODE_NOTIFICATION, false);
+
+                resetToolbarHideTimer();
             }
         });
 
@@ -1247,6 +1331,8 @@ public class AutoActivity extends CarActivity implements
 
                 if(!KeyEventService.sendGlobaleKey(AccessibilityService.GLOBAL_ACTION_RECENTS))
                     GenerateKeyEvent(KeyEvent.KEYCODE_APP_SWITCH, false);
+
+                resetToolbarHideTimer();
             }
         });
 
@@ -1258,6 +1344,8 @@ public class AutoActivity extends CarActivity implements
                 v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
 
                 launchHome(AutoActivity.this);
+
+                resetToolbarHideTimer();
             }
         });
 
@@ -1270,6 +1358,8 @@ public class AutoActivity extends CarActivity implements
 
                 if(!KeyEventService.sendGlobaleKey(AccessibilityService.GLOBAL_ACTION_BACK))
                     GenerateKeyEvent(KeyEvent.KEYCODE_BACK, false);
+
+                resetToolbarHideTimer();
             }
         });
     }
@@ -1296,6 +1386,8 @@ public class AutoActivity extends CarActivity implements
 
                 final String packageName = FavoritesLoader.instance().getItems(getApplicationContext()).get(position);
                 handleAppClick(packageName);
+
+                resetToolbarHideTimer();
             }
         });
 
@@ -1371,13 +1463,21 @@ public class AutoActivity extends CarActivity implements
                 if(!KeyEventService.sendGlobaleKey(AccessibilityService.GLOBAL_ACTION_BACK))
                     GenerateKeyEvent(KeyEvent.KEYCODE_BACK, false);
 
+                resetToolbarHideTimer();
+
                 break;
             case 2:
                 handleHome();
+                resetToolbarHideTimer();
                 break;
 
             case 3:
                 launchHome(getApplicationContext());
+                resetToolbarHideTimer();
+                break;
+
+            case 4:
+                toggleToolbar();
                 break;
         }
     }

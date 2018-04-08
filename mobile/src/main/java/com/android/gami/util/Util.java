@@ -1,4 +1,4 @@
-package com.neokii.androidautomirror.util;
+package com.android.gami.util;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;

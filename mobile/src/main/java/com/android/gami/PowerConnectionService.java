@@ -1,9 +1,8 @@
-package com.neokii.androidautomirror;
+package com.android.gami;
 
 import android.app.Service;
 import android.app.UiModeManager;
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;

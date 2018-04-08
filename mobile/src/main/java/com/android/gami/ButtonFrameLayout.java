@@ -1,4 +1,4 @@
-package com.neokii.androidautomirror;
+package com.android.gami;
 
 import android.content.Context;
 import android.support.annotation.Nullable;

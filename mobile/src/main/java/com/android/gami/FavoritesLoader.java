@@ -1,4 +1,4 @@
-package com.neokii.androidautomirror;
+package com.android.gami;
 
 import android.app.Activity;
 import android.content.Context;

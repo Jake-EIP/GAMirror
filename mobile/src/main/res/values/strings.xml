@@ -18,7 +18,13 @@
         <string name="setting_show_left_toolbar_use_system_key">"Use system keys instead of favorites."</string>
         <string name="setting_left_toolbar_size">"Toolbar width (50 ~ 100)"</string>
         <string name="setting_left_toolbar_show_battery_level">Show battery level</string>
+        <string name="setting_left_toolbar_auto_hide_time">Auto hide time (sec, 0: disabled)</string>
+        <string name="setting_left_toolbar_floating">Enable floating mode</string>
+        <string name="setting_left_toolbar_floating_desc">Tap the bottom left corner to open the toolbar.</string>
 
+    <string name="setting_category_audio">Audio</string>
+        <string name="setting_request_audio_focus_at_start">"Request audio focus at start"</string>
+        <string name="setting_request_audio_focus_at_start_desc">""</string>
 
     <string name="setting_category_brightness">Brightness</string>
         <string name="setting_overwrite_brightness">Overwrite screen brightness</string>
@@ -65,6 +71,7 @@
         <item>Back</item>
         <item>Kill current app</item>
         <item>Go to Home</item>
+        <item>Toggle left toolbar</item>
     </string-array>
 
     <string name="required_accessibility_permissions">"Access permission is required to generate global key events.
@@ -108,6 +115,7 @@ Please enable it in Settings."</string>
         <item>1</item>
         <item>2</item>
         <item>3</item>
+        <item>4</item>
     </string-array>
 
     <string-array name="pref_orientation_list_values">

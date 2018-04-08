@@ -3,33 +3,33 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "com.neokii.androidautomirror"
+        applicationId "com.android.gami"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 1110
-        versionName "1.1.1"
+        versionCode 1120
+        versionName "1.1.2"
+
+        setProperty("archivesBaseName", "GAMirror-$versionName")
 
     }
     buildTypes {
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
-            android.applicationVariants.all { variant ->
-                variant.outputs.all {
-                    outputFileName = "GAMirror.apk"
-                }
-            }
+
+
         }
 
         debug {
             minifyEnabled false
 
-            android.applicationVariants.all { variant ->
+            /*android.applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "../../../../../debug/GAMirror.apk"
                 }
-            }
+            }*/
         }
     }
 

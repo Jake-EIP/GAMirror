@@ -1,4 +1,4 @@
-package com.neokii.androidautomirror.util;
+package com.android.gami.util;
 
 import android.util.Log;
 import android.util.SparseIntArray;

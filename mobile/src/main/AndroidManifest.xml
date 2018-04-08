@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.neokii.androidautomirror">
+          package="com.android.gami">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAPTURE_VIDEO_OUTPUT" />
@@ -20,9 +20,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:name=".AutoApplication">
+        android:name="com.android.gami.AutoApplication">
 
-        <activity android:name=".MainActivity"
+        <activity android:name="com.android.gami.MainActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -42,7 +42,7 @@
         </activity>
 
         <service
-            android:name=".AutoService"
+            android:name="com.android.gami.AutoService"
             android:enabled="true"
             android:exported="true"
             android:label="@string/app_name">
@@ -63,7 +63,7 @@
 
 
         <service
-            android:name=".KeyEventService"
+            android:name="com.android.gami.KeyEventService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" >
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
@@ -81,7 +81,7 @@
             </intent-filter>
         </receiver-->
 
-        <service android:name=".PowerConnectionService"/>
+        <service android:name="com.android.gami.PowerConnectionService"/>
 
     </application>
 

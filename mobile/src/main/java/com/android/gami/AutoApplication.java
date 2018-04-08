@@ -1,12 +1,9 @@
-package com.neokii.androidautomirror;
+package com.android.gami;
 
 import android.app.Application;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Point;
-import android.preference.PreferenceManager;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.OrientationEventListener;
 import android.view.WindowManager;

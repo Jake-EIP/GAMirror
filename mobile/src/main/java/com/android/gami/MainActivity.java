@@ -1,11 +1,10 @@
-package com.neokii.androidautomirror;
+package com.android.gami;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
@@ -27,8 +26,8 @@ import android.view.MenuItem;
 import android.view.accessibility.AccessibilityManager;
 
 import com.github.slashmax.aamirror.AppCompatPreferenceActivity;
-import com.neokii.androidautomirror.util.SettingUtil;
-import com.neokii.androidautomirror.util.ShellManager;
+import com.android.gami.util.SettingUtil;
+import com.android.gami.util.ShellManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,6 +95,9 @@ public class MainActivity extends AppCompatPreferenceActivity
             bindPreferenceSummaryToValue(findPreference("action_when_power_plugged"));
             bindPreferenceSummaryToValue(findPreference("action_when_power_unplugged"));
 
+            bindPreferenceSummaryToValue(findPreference("left_toolbar_auto_hide_time"));
+
+
             EditTextPreference left_toolbar_size = (EditTextPreference)findPreference("left_toolbar_size");
             bindPreferenceSummaryToValue(left_toolbar_size);
 
@@ -137,7 +139,32 @@ public class MainActivity extends AppCompatPreferenceActivity
             String packageName = SettingUtil.getString(getActivity(), launch_app_at_start.getKey(), "");
             launch_app_at_start.setSummary(getSummary(packageName));
             PreferenceManager.getDefaultSharedPreferences(getActivity()).registerOnSharedPreferenceChangeListener(_listener);
+
+            Preference.OnPreferenceChangeListener preferenceChangeListener = new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue)
+                {
+                    SettingUtil.setBoolean(getActivity(), preference.getKey(), (Boolean)newValue);
+
+                    if(SettingUtil.getBoolean(getActivity(), "show_left_toolbar", false) &&
+                            SettingUtil.getBoolean(getActivity(), "left_toolbar_floating", true))
+                    {
+                        findPreference("left_toolbar_auto_hide_time").setEnabled(true);
+                    }
+                    else
+                    {
+                        findPreference("left_toolbar_auto_hide_time").setEnabled(false);
+                    }
+
+                    return true;
+                }
+            };
+
+            findPreference("show_left_toolbar").setOnPreferenceChangeListener(preferenceChangeListener);
+            findPreference("left_toolbar_floating").setOnPreferenceChangeListener(preferenceChangeListener);
         }
+
+
 
         @Override
         public void onDestroy()
